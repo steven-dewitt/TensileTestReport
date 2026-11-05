@@ -21,7 +21,7 @@ All units are fixed: mm, N, MPa, and strain in mm/mm.
 
 | # | Section | Contents |
 |---|---------|----------|
-| 1 | Test request and material | Customer, grade, lot, condition, specimen drawing; test machine, load cell, extensometer, load train, loading rate, temperature, humidity, conditioning, operator |
+| 1 | Test request and material | Customer, PO / work order, material grade, manufacturer; test machine, machine ID, load cell capacity, loading rate, temperature, humidity, test dates, operator |
 | 2 | Specimen location in billet | Drawings to scale of the extruded billet, Ø7.750 × 1.000 in thick, and the test specimen. The plan view and section A–A show the 4.750 in specimen lying on a diameter through the billet centre at mid-thickness, perpendicular to the extrusion axis, with 1.500 in of billet at each end. A specimen detail shows the Ø0.500 in ends and Ø0.250 in centre section. |
 | 3 | Specimen dimensions | Specimen IDs, two gauge-diameter readings 90° apart, reduced-section length and overall length. The page gives the mean diameter and cross-sectional area. Specimens are added and removed here. |
 | 4 | Test results by specimen | The nine values reported by the test software (below), fracture location, include/exclude and notes. A load ÷ area check flags reported stresses that don't match the measured area. |

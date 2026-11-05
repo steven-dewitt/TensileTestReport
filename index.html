@@ -274,10 +274,6 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
     <label class="field"><span>PO / work order no.</span><input data-bind="meta.poNo"></label>
     <label class="field"><span>Material grade / designation</span><input data-bind="meta.grade"></label>
     <label class="field"><span>Manufacturer / supplier</span><input data-bind="meta.manufacturer"></label>
-    <label class="field"><span>Lot / batch no.</span><input data-bind="meta.lot"></label>
-    <label class="field"><span>Material condition (baked, graphitized, purified, impregnated…)</span><input data-bind="meta.condition"></label>
-    <label class="field"><span>Specimen drawing / configuration</span><input data-bind="meta.specDrawing"></label>
-    <label class="field"><span>Specimen machining method</span><input data-bind="meta.machining"></label>
   </div>
 
   <h3>Test equipment and conditions</h3>
@@ -285,14 +281,9 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
     <label class="field"><span>Test machine (make / model)</span><input data-bind="meta.machine"></label>
     <label class="field"><span>Machine asset / ID no.</span><input data-bind="meta.machineId"></label>
     <label class="field"><span>Load cell capacity</span><input data-bind="meta.loadCell"></label>
-    <label class="field"><span>Load cell calibration due</span><input data-bind="meta.loadCellCal" type="date"></label>
-    <label class="field"><span>Extensometer / strain measurement</span><input data-bind="meta.extensometer"></label>
-    <label class="field"><span>Extensometer calibration due</span><input data-bind="meta.extCal" type="date"></label>
-    <label class="field"><span>Load train / alignment (holders, yokes, cables)</span><input data-bind="meta.loadTrain"></label>
     <label class="field"><span>Loading rate (crosshead speed or stress rate, with units)</span><input data-bind="meta.rate"></label>
     <label class="field"><span>Test temperature (°C)</span><input data-bind="meta.temp"></label>
     <label class="field"><span>Relative humidity (%)</span><input data-bind="meta.rh"></label>
-    <label class="field"><span>Specimen conditioning / drying</span><input data-bind="meta.conditioning"></label>
     <label class="field"><span>Test date(s)</span><input data-bind="meta.testDate"></label>
     <label class="field"><span>Operator</span><input data-bind="meta.operator"></label>
   </div>
@@ -933,12 +924,9 @@ function exampleState(){
   const st = blankState();
   Object.assign(st.meta, {
     labName:"Example Materials Test Laboratory", reportNo:"EX-2026-0101", reportDate:"2026-11-05", revision:"0", status:"Draft",
-    customer:"Example customer", poNo:"WO-0000", grade:"Extruded graphite billet, Ø7.750 × 1.000 in (example)", manufacturer:"—", lot:"LOT-EX-01",
-    condition:"Graphitized", specDrawing:"Round specimen, 4.750 in long, Ø0.500 in ends, Ø0.250 in centre section", machining:"CNC turned, dry; no coolant",
-    machine:"Electromechanical universal test machine", machineId:"UTM-01", loadCell:"10 kN", loadCellCal:"2027-03-31",
-    extensometer:"Clip-on extensometer, 2 arms", extCal:"2027-01-15",
-    loadTrain:"Self-aligning holders with flexible cable couplings", rate:"Crosshead 0.5 mm/min", temp:"22", rh:"45",
-    conditioning:"Dried 2 h at 120 °C, cooled in desiccator", testDate:"2026-11-02 to 2026-11-03", operator:"A. Technician",
+    customer:"Example customer", poNo:"WO-0000", grade:"Extruded graphite billet, Ø7.750 × 1.000 in (example)", manufacturer:"—",
+    machine:"Electromechanical universal test machine", machineId:"UTM-01", loadCell:"10 kN", rate:"Crosshead 0.5 mm/min",
+    temp:"22", rh:"45", testDate:"2026-11-02 to 2026-11-03", operator:"A. Technician",
     dimInstrument:"Digital micrometer MIC-07", deviations:"None.",
     remarks:"S-09 fractured in the fillet and is excluded from statistics. Fracture surfaces on all other specimens were flat and granular.",
     conclusion:""
