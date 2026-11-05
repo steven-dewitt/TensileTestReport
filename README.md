@@ -26,7 +26,7 @@ All units are fixed: mm, N, MPa, and strain in mm/mm.
 | 3 | Specimen dimensions | Specimen IDs, two gauge-diameter readings 90° apart, reduced-section length and overall length. The page gives the mean diameter and cross-sectional area. Specimens are added and removed here. |
 | 4 | Test results by specimen | The nine values reported by the test software (below), fracture location, include/exclude and notes. A load ÷ area check flags reported stresses that don't match the measured area. |
 | 5 | Summary of results | Summary tiles, statistics for every result (n, mean, SD, CV, min, max), a chart for each result by specimen, and a Weibull plot of tensile strength |
-| 6 | Remarks, deviations and approval | Deviations, observations, conclusion and signatures |
+| 6 | Remarks and approval | Observations, conclusion and signatures |
 
 ### Results entered per specimen (Section 4)
 
