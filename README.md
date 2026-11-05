@@ -19,18 +19,16 @@ All units are fixed: mm, N, MPa, and strain in mm/mm.
 
 ## Report sections
 
-| # | Section | What you enter |
-|---|---------|----------------|
+| # | Section | Contents |
+|---|---------|----------|
 | 1 | Test request and material | Customer, grade, lot, condition, specimen drawing; test machine, load cell, extensometer, load train, loading rate, temperature, humidity, conditioning, operator |
-| 2 | Original sample (source block / billet) | Sample ID, shape (rectangular block or cylinder), forming method, forming axis, datum definition, three readings of each dimension, mass. The page gives mean, range, volume and bulk density. |
-| 3 | Specimen removal locations | For each specimen: ID, long axis (X/Y/Z) and the centre coordinates measured from the datum. The page gives the orientation to the forming axis (∥/⊥, with/against grain), the depth below the nearest surface, and a position check (inside the sample, no overlap with other specimens). A **location map** shows the top, front and side views with each specimen drawn to scale and shaded by tensile strength. |
-| 4 | Specimen dimensions | Two gauge-diameter readings 90° apart, reduced-section length, overall length. The page gives the mean diameter and cross-sectional area. |
-| 5 | Test results by specimen | The nine values reported by the test software (below), fracture location, include/exclude, notes. A load ÷ area check flags reported stresses that don't match the measured area. |
-| 6 | Stress–strain records | Optional raw load–strain data per specimen, pasted from the test software. Used to draw curves and to fill any result left blank in Section 5. |
-| 7 | Summary of results | Summary tiles, statistics for every result (n, mean, SD, CV, min, max), means by orientation, a chart for each result, stress–strain curves, a Weibull plot, and any result plotted against position in the sample |
-| 8 | Remarks, deviations and approval | Deviations, observations, conclusion, signatures |
+| 2 | Sample location in billet | A drawing of the cylindrical billet. The 0.500 × 0.500 × 4.750 in (12.70 × 12.70 × 120.65 mm) sample blank is shown removed from the very centre: on the billet axis and centred along its length. A pictorial view and an end view are both dimensioned. |
+| 3 | Specimen dimensions | Specimen IDs, two gauge-diameter readings 90° apart, reduced-section length and overall length. The page gives the mean diameter and cross-sectional area. Specimens are added and removed here. |
+| 4 | Test results by specimen | The nine values reported by the test software (below), fracture location, include/exclude and notes. A load ÷ area check flags reported stresses that don't match the measured area. |
+| 5 | Summary of results | Summary tiles, statistics for every result (n, mean, SD, CV, min, max), a chart for each result by specimen, and a Weibull plot of tensile strength |
+| 6 | Remarks, deviations and approval | Deviations, observations, conclusion and signatures |
 
-### Results entered per specimen (Section 5)
+### Results entered per specimen (Section 4)
 
 | Result | Unit |
 |--------|------|
@@ -47,38 +45,25 @@ All units are fixed: mm, N, MPa, and strain in mm/mm.
 Values can be typed in, or pasted in bulk with **Paste a results table from the
 test software**. Paste one row per specimen with the columns in the order above,
 optionally preceded by a specimen ID column. Rows with IDs are matched by ID.
-Header and unit rows are skipped.
+Header and unit rows are skipped. If strain gauge length is left blank, the
+default entered at the top of Section 4 is used.
 
 ## Calculations
 
 - **Area** = π·d̄²/4, where d̄ is the mean of the two gauge-diameter readings.
-- **Bulk density** = mass ÷ volume of the original sample, using mean dimensions.
-- **Orientation**: a specimen is ∥ when its long axis is the forming axis and ⊥ otherwise.
-  For molded and vibration-molded stock, ∥ is labelled *against grain (AG)*. For extruded
-  stock, ∥ is labelled *with grain (WG)*.
+- **Stress check**: load at break ÷ area is compared with the reported tensile stress at
+  break, and differences over 2 % are flagged. The page also flags stress at break above
+  tensile strength, strain at tensile strength above strain at break, and strain values
+  that look like percentages.
 - **Included specimens**: with *Include* set to *Auto*, only specimens that fractured within
   the gauge length count in the statistics. *Yes* and *No* override this.
 - **Statistics**: sample standard deviation (n − 1); CV = SD ÷ mean.
 - **Weibull** (tensile stress at tensile strength): F = (i − 0.5)/n, with least-squares fit of
   ln ln[1/(1−F)] on ln σ, giving the Weibull modulus m and characteristic strength σ₀.
 
-When a result is left blank and a load–strain record exists, it is calculated from the record:
-
-| Result | From the record |
-|--------|-----------------|
-| Tensile strength point | point of maximum load |
-| Break point | last point with load ≥ the break threshold (default 10 % of maximum load); its 1-based index is the data point at break |
-| Tensile stress | load ÷ area |
-| Young's modulus | least-squares slope of stress on strain between 0.01 % and 0.1 % strain (limits adjustable) |
-| E-modulus | chord slope between 0.05 % and 0.25 % strain (limits adjustable) |
-| Strain gauge length | the default value entered at the top of Section 5 |
-
-Check the default calculation limits against your test method and software settings before you rely on calculated values.
-
 ## Example data
 
-**Load example data** fills the report with generated values for a molded graphite
-block with ten specimens: six parallel to the pressing axis and four perpendicular,
+**Load example data** fills the report with generated values for ten specimens,
 one of which broke in the fillet. The values are illustrative only and are not
 measured results.
 

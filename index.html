@@ -158,6 +158,25 @@ svg [data-tip]:focus-visible{stroke:var(--ink);stroke-width:2}
 .charts.small .chart h4{font-size:13px}
 details.paste{margin:12px 0 4px;border:1px dashed var(--field-border);border-radius:8px;padding:10px 12px}
 details.paste summary{cursor:pointer;font-weight:600;font-size:13px}
+/* ---------- Billet figure ---------- */
+.billet-fig{margin:0}
+.billet-fig svg{display:block;width:100%;max-width:860px;height:auto}
+svg .bf-billet{fill:var(--wash);stroke:var(--ink2);stroke-width:1.5}
+svg .bf-billet-top{fill:var(--wash);stroke:var(--ink2);stroke-width:1.5}
+svg .bf-hidden{fill:none;stroke:var(--ink2);stroke-width:1;stroke-dasharray:5 4}
+svg .bf-plane{fill:none;stroke:var(--s2);stroke-width:1;stroke-dasharray:4 4;opacity:.75}
+svg .bf-center{stroke:var(--muted);stroke-width:1;stroke-dasharray:14 4 3 4}
+svg .bf-bar-l,svg .bf-bar-end{fill:var(--s2)}
+svg .bf-bar-r{fill:color-mix(in srgb,var(--s2) 72%,#000)}
+svg .bf-bar-t{fill:color-mix(in srgb,var(--s2) 60%,#fff)}
+svg .bf-ext{stroke:var(--ink2);stroke-width:.8}
+svg .bf-dim,svg .bf-leader{stroke:var(--ink);stroke-width:1}
+svg .bf-arrowhead,svg .bf-dot{fill:var(--ink)}
+svg .bf-dimtxt{fill:var(--ink);font-size:14px;font-weight:600}
+svg .bf-dimsub{fill:var(--ink2);font-size:12px}
+svg .bf-note{fill:var(--ink2);font-size:12.5px}
+svg .bf-title{fill:var(--ink);font-size:12px;font-weight:650;letter-spacing:.04em}
+svg .bf-caption{fill:var(--muted);font-size:12px}
 #tip{position:fixed;pointer-events:none;z-index:50;background:var(--paper);color:var(--ink);border:1px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.14);border-radius:7px;padding:7px 9px;font-size:12px;line-height:1.4;max-width:260px;display:none;white-space:pre-line;font-variant-numeric:tabular-nums}
 
 /* ---------- Header ---------- */
@@ -201,6 +220,8 @@ details.paste summary{cursor:pointer;font-weight:600;font-size:13px}
   .chart,.tile{break-inside:avoid}
   .charts{grid-template-columns:1fr 1fr}
   .charts.small{grid-template-columns:1fr 1fr 1fr}
+  #sec-loc,.billet-fig{break-inside:avoid}
+  .charts>.chart:only-child{grid-column:1/-1}
   .tbl-res{font-size:9.5px}
   .tbl-res th{min-width:0}
   .tbl-res td input.n{min-width:0}
@@ -271,83 +292,104 @@ details.paste summary{cursor:pointer;font-weight:600;font-size:13px}
   </div>
 </section>
 
-<!-- ================= ORIGINAL SAMPLE ================= -->
-<section class="sheet" id="sec-block">
-  <h2><span class="num">2</span> Original sample (source block / billet)</h2>
-  <p class="hint">Enter the as-received dimensions of the sample the test specimens were cut from. Take each dimension at three places; the mean is used for volume, bulk density and the location map.</p>
-  <div class="grid">
-    <label class="field"><span>Sample / billet ID</span><input data-bind="block.id"></label>
-    <label class="field"><span>Sample shape</span>
-      <select data-bind="block.shape" data-rerender="block">
-        <option value="rect">Rectangular block</option>
-        <option value="cyl">Cylinder / round billet</option>
-      </select></label>
-    <label class="field"><span>Forming method</span>
-      <select data-bind="block.forming">
-        <option value="molded">Molded (uniaxial pressing)</option>
-        <option value="vibro">Vibration molded</option>
-        <option value="extruded">Extruded</option>
-        <option value="iso">Isostatically pressed</option>
-        <option value="other">Other / unknown</option>
-      </select></label>
-    <label class="field"><span>Forming axis (pressing / extrusion direction)</span>
-      <select data-bind="block.grainAxis">
-        <option value="X">X</option><option value="Y">Y</option><option value="Z">Z</option>
-      </select></label>
-    <label class="field wide"><span>Datum / origin and axis definition</span><input data-bind="block.datum" placeholder="e.g. Origin at stamped corner; X along length, Y along width, Z along thickness (pressing direction)"></label>
-  </div>
-
-  <div class="two" style="margin-top:14px">
-    <div>
-      <h3>Dimension measurements</h3>
-      <div class="tbl-wrap"><table id="blockTable"></table></div>
-    </div>
-    <div>
-      <h3>Mass and bulk density</h3>
-      <div class="tbl-wrap"><table>
-        <tr><th>Item</th><th class="r">Value</th></tr>
-        <tr><td>Mass (g)</td><td><input class="n" data-bind="block.mass" data-num inputmode="decimal"></td></tr>
-        <tr><td>Volume (cm³), from mean dimensions</td><td class="out" data-out="blk.vol">—</td></tr>
-        <tr><td>Bulk density (g/cm³)</td><td class="out" data-out="blk.rho">—</td></tr>
-        <tr><td>Measuring instrument / ID</td><td><input data-bind="block.instrument"></td></tr>
-      </table></div>
-      <label class="field" style="margin-top:10px"><span>Sample condition and marking notes</span><textarea data-bind="block.notes" rows="2"></textarea></label>
-    </div>
-  </div>
-</section>
-
-<!-- ================= SPECIMEN LOCATIONS ================= -->
+<!-- ================= SAMPLE LOCATION ================= -->
 <section class="sheet" id="sec-loc">
-  <h2><span class="num">3</span> Specimen removal locations</h2>
-  <p class="hint">For each test specimen, enter the specimen's long axis and the coordinates of its <b>centre</b>, measured from the datum in Section 2. <span id="locHintShape"></span></p>
-  <div class="tbl-wrap"><table id="locTable"></table></div>
-  <div class="no-print" style="margin:10px 0 0;display:flex;gap:8px;flex-wrap:wrap">
-    <button id="btnAdd">+ Add specimen</button>
-    <button id="btnAdd5">+ Add 5</button>
-  </div>
-  <h3>Location map</h3>
-  <div class="chart" style="background:var(--surface)">
-    <div class="legend" id="mapLegend"></div>
-    <div id="mapBox"></div>
-  </div>
+  <h2><span class="num">2</span> Sample location in billet</h2>
+  <p class="hint">A 0.500 in × 0.500 in × 4.750 in sample blank was removed from the very centre of the cylindrical billet. It lies on the billet axis and is centred along the billet length.</p>
+  <figure class="billet-fig">
+    <svg viewBox="0 0 780 430" role="img" aria-labelledby="billetTitle billetDesc">
+      <title id="billetTitle">Cylinder billet with centre sample location</title>
+      <desc id="billetDesc">Pictorial view of a cylindrical billet with a 0.500 by 0.500 by 4.750 inch sample blank on the billet axis at mid-length, and an end view showing the square sample centred on the billet axis.</desc>
+      <defs>
+        <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L10 5L0 9z" class="bf-arrowhead"/></marker>
+      </defs>
+
+      <!-- ===== Pictorial view ===== -->
+      <text class="bf-title" x="40" y="24">PICTORIAL VIEW</text>
+      <!-- billet body -->
+      <path class="bf-billet" d="M90 80 V350 A120 30 0 0 0 330 350 V80 A120 30 0 0 1 90 80 Z"/>
+      <path class="bf-hidden" d="M90 350 A120 30 0 0 1 330 350"/>
+      <ellipse class="bf-billet-top" cx="210" cy="80" rx="120" ry="30"/>
+      <!-- cut planes at the ends of the sample -->
+      <ellipse class="bf-plane" cx="210" cy="135" rx="120" ry="30"/>
+      <ellipse class="bf-plane" cx="210" cy="295" rx="120" ry="30"/>
+      <!-- centre line (billet axis) -->
+      <line class="bf-center" x1="210" y1="34" x2="210" y2="396"/>
+      <text class="bf-note" x="216" y="44">Billet axis</text>
+      <!-- sample blank: square prism on the axis, faces shaded for depth -->
+      <path class="bf-bar-l" d="M189 135 L210 140.3 L210 300.3 L189 295 Z"/>
+      <path class="bf-bar-r" d="M210 140.3 L231 135 L231 295 L210 300.3 Z"/>
+      <path class="bf-bar-t" d="M210 129.7 L231 135 L210 140.3 L189 135 Z"/>
+      <!-- length dimension -->
+      <line class="bf-ext" x1="236" y1="135" x2="384" y2="135"/>
+      <line class="bf-ext" x1="236" y1="295" x2="384" y2="295"/>
+      <line class="bf-dim" x1="376" y1="137" x2="376" y2="293" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt" x="384" y="208">4.750 in</text>
+      <text class="bf-dimsub" x="384" y="225">(120.65 mm)</text>
+      <!-- equal spacing to billet ends: centred along the length -->
+      <line class="bf-dim" x1="62" y1="82" x2="62" y2="133" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <line class="bf-dim" x1="62" y1="297" x2="62" y2="348" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <line class="bf-ext" x1="56" y1="80" x2="92" y2="80"/>
+      <line class="bf-ext" x1="56" y1="135" x2="186" y2="135"/>
+      <line class="bf-ext" x1="56" y1="295" x2="186" y2="295"/>
+      <line class="bf-ext" x1="56" y1="350" x2="92" y2="350"/>
+      <text class="bf-dimtxt" x="50" y="112" text-anchor="end">=</text>
+      <text class="bf-dimtxt" x="50" y="327" text-anchor="end">=</text>
+      <!-- leader to the sample -->
+      <polyline class="bf-leader" fill="none" points="224,175 300,104 346,104"/>
+      <circle cx="224" cy="175" r="2.5" class="bf-dot"/>
+      <text class="bf-note" x="350" y="100">Sample blank</text>
+      <text class="bf-dimsub" x="350" y="116">0.500 × 0.500 in</text>
+      <text class="bf-caption" x="210" y="412" text-anchor="middle">Cylinder billet (not to scale)</text>
+
+      <!-- ===== End view ===== -->
+      <text class="bf-title" x="500" y="24">END VIEW (looking along billet axis)</text>
+      <circle class="bf-billet" cx="610" cy="215" r="135"/>
+      <line class="bf-center" x1="460" y1="215" x2="760" y2="215"/>
+      <line class="bf-center" x1="610" y1="66" x2="610" y2="364"/>
+      <rect class="bf-bar-end" x="592" y="197" width="36" height="36"/>
+      <!-- 0.500 width -->
+      <line class="bf-ext" x1="592" y1="193" x2="592" y2="150"/>
+      <line class="bf-ext" x1="628" y1="193" x2="628" y2="150"/>
+      <line class="bf-dim" x1="552" y1="158" x2="590" y2="158" marker-end="url(#arw)"/>
+      <line class="bf-dim" x1="668" y1="158" x2="630" y2="158" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt" x="610" y="146" text-anchor="middle">0.500 in <tspan class="bf-dimsub">(12.70 mm)</tspan></text>
+      <!-- 0.500 height -->
+      <line class="bf-ext" x1="632" y1="197" x2="690" y2="197"/>
+      <line class="bf-ext" x1="632" y1="233" x2="690" y2="233"/>
+      <line class="bf-dim" x1="682" y1="160" x2="682" y2="195" marker-end="url(#arw)"/>
+      <line class="bf-dim" x1="682" y1="270" x2="682" y2="235" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt" x="690" y="258">0.500 in</text>
+      <text class="bf-dimsub" x="690" y="275">(12.70 mm)</text>
+      <text class="bf-note" x="610" y="388" text-anchor="middle">Sample centred on billet axis</text>
+      <text class="bf-caption" x="610" y="410" text-anchor="middle">Billet diameter not to scale</text>
+    </svg>
+    <figcaption class="legend" style="margin-top:6px">
+      <span><i style="background:var(--s2)"></i>Sample blank, 0.500 × 0.500 × 4.750 in (12.70 × 12.70 × 120.65 mm), long axis parallel to billet axis</span>
+      <span><i style="background:var(--wash);border:1px solid var(--ink2)"></i>Billet</span>
+    </figcaption>
+  </figure>
 </section>
 
 <!-- ================= SPECIMEN DIMENSIONS ================= -->
 <section class="sheet pb" id="sec-dim">
-  <h2><span class="num">4</span> Specimen dimensions</h2>
-  <p class="hint">Measure the gauge-section diameter twice at the minimum section, 90° apart. The cross-sectional area comes from the mean diameter. It is used to check the reported stresses and to turn a load record into stress.</p>
+  <h2><span class="num">3</span> Specimen dimensions</h2>
+  <p class="hint">Measure the gauge-section diameter twice at the minimum section, 90° apart. The cross-sectional area comes from the mean diameter and is used to check the reported stress at break.</p>
   <div class="grid" style="margin-bottom:10px">
     <label class="field"><span>Nominal gauge diameter (mm)</span><input class="n" data-bind="settings.nomD" data-num inputmode="decimal"></label>
-    <label class="field"><span>Nominal shoulder / grip-end diameter (mm), used for the map</span><input class="n" data-bind="settings.shoulder" data-num inputmode="decimal"></label>
     <label class="field"><span>Measuring instrument / ID</span><input data-bind="meta.dimInstrument"></label>
   </div>
   <div class="tbl-wrap"><table id="dimTable" class="tbl-data"></table></div>
+  <div class="no-print" style="margin:10px 0 0;display:flex;gap:8px;flex-wrap:wrap">
+    <button id="btnAdd">+ Add specimen</button>
+    <button id="btnAdd5">+ Add 5</button>
+  </div>
 </section>
 
 <!-- ================= TEST RESULTS ================= -->
 <section class="sheet pb" id="sec-res">
-  <h2><span class="num">5</span> Test results by specimen</h2>
-  <p class="hint">Enter the values reported by the test software for each specimen. A blank cell is filled from the stress–strain record in Section 6 when one exists. Those values appear in grey as placeholders and are marked “from record” in the export.</p>
+  <h2><span class="num">4</span> Test results by specimen</h2>
+  <p class="hint">Enter the values reported by the test software for each specimen. If strain gauge length is left blank, the default below is used.</p>
   <div class="grid" style="margin-bottom:10px">
     <label class="field"><span>Strain gauge length, default for all specimens (mm)</span><input class="n" data-bind="settings.defGL" data-num inputmode="decimal"></label>
   </div>
@@ -368,85 +410,31 @@ details.paste summary{cursor:pointer;font-weight:600;font-size:13px}
   <div class="tbl-wrap"><table id="accTable" class="tbl-data"></table></div>
 </section>
 
-<!-- ================= STRESS STRAIN DATA ================= -->
-<section class="sheet" id="sec-ss">
-  <h2><span class="num">6</span> Stress–strain records</h2>
-  <p class="hint">Optional. Paste the raw load–strain record for each specimen to draw the curves and to calculate any results left blank in Section 5.</p>
-  <div class="grid" style="margin-bottom:12px">
-    <label class="field"><span>Young's modulus fit: lower strain (%)</span><input class="n" data-bind="settings.yLo" data-num inputmode="decimal"></label>
-    <label class="field"><span>Young's modulus fit: upper strain (%)</span><input class="n" data-bind="settings.yHi" data-num inputmode="decimal"></label>
-    <label class="field"><span>E-modulus chord: lower strain (%)</span><input class="n" data-bind="settings.eLo" data-num inputmode="decimal"></label>
-    <label class="field"><span>E-modulus chord: upper strain (%)</span><input class="n" data-bind="settings.eHi" data-num inputmode="decimal"></label>
-    <label class="field"><span>Break point: last point with load ≥ this % of maximum load</span><input class="n" data-bind="settings.breakThr" data-num inputmode="decimal"></label>
-  </div>
-  <div class="no-print" style="border:1px dashed var(--field-border);border-radius:8px;padding:12px;margin-bottom:12px">
-    <div class="grid">
-      <label class="field"><span>Specimen</span><select id="curveSpec"></select></label>
-      <label class="field"><span>Column 1 (strain) is in</span>
-        <select id="curveStrainU"><option value="abs">mm/mm</option><option value="pct">percent (%)</option><option value="ue">microstrain (µε)</option></select></label>
-      <label class="field"><span>Column 2 is</span>
-        <select id="curveY"><option value="load">Load (N)</option><option value="stress">Tensile stress (MPa)</option></select></label>
-    </div>
-    <label class="field" style="margin-top:10px"><span>Paste two columns (strain, load) from the test software or a spreadsheet. Tab, comma, semicolon or space separated; header rows are skipped.</span>
-      <textarea id="curveText" rows="5" placeholder="0.00000	0.0&#10;0.00005	62.1&#10;0.00010	124.0&#10;…"></textarea></label>
-    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
-      <button id="btnCurveImport" class="primary">Import into selected specimen</button>
-      <button id="btnCurveShow">Show stored data</button>
-      <button id="btnCurveClear" class="danger">Delete curve for selected specimen</button>
-      <span id="curveMsg" class="sub" style="align-self:center"></span>
-    </div>
-  </div>
-  <div class="tbl-wrap"><table id="curveTable" class="tbl-data"></table></div>
-</section>
-
 <!-- ================= SUMMARY ================= -->
 <section class="sheet pb" id="sec-sum">
-  <h2><span class="num">7</span> Summary of results</h2>
+  <h2><span class="num">5</span> Summary of results</h2>
   <div class="tiles" id="tiles"></div>
   <h3>Statistics, all included specimens</h3>
   <div class="tbl-wrap"><table id="sumTable" class="tbl-data"></table></div>
-  <h3>Mean by orientation to the forming axis</h3>
-  <div class="tbl-wrap"><table id="grpTable" class="tbl-data"></table></div>
   <p class="sub" style="margin-top:6px">Statistics include only specimens marked <i>Included</i>. SD is the sample standard deviation (n − 1). CV = SD / mean. For the Weibull fit of tensile strength, rank i of n uses F = (i − 0.5)/n and least-squares regression of ln ln[1/(1−F)] on ln σ.</p>
 
   <h3>Result charts by specimen</h3>
-  <div class="legend" data-legend="orient"></div>
+  <div class="legend" data-legend="incl"></div>
   <div class="charts small" id="metricCharts"></div>
 
-  <h3>Curves and distribution</h3>
+  <h3>Distribution</h3>
   <div class="charts">
     <div class="chart">
-      <h4>Stress–strain curves</h4>
-      <div class="cap">Tensile stress vs. strain 1 for each specimen with a record. A dot marks the break point.</div>
-      <div class="legend" data-legend="orient"></div>
-      <div id="chSS"></div>
-    </div>
-    <div class="chart">
       <h4>Weibull plot, tensile stress at tensile strength</h4>
-      <div class="cap" id="weibCap">Included specimens, all orientations.</div>
-      <div class="legend" data-legend="orient-fit"></div>
+      <div class="cap" id="weibCap">Included specimens.</div>
       <div id="chWeib"></div>
-    </div>
-    <div class="chart">
-      <h4>Result vs. position in the original sample</h4>
-      <div class="chart-ctl no-print">
-        <select data-bind="settings.posMetric" id="posMetric" aria-label="Result to plot"></select>
-        <span>against</span>
-        <select data-bind="settings.posAxis" aria-label="Position">
-          <option value="X">X coordinate</option><option value="Y">Y coordinate</option><option value="Z">Z coordinate</option>
-          <option value="depth">Depth from nearest surface</option>
-        </select>
-      </div>
-      <div class="cap" id="posCap"></div>
-      <div class="legend" data-legend="orient"></div>
-      <div id="chPos"></div>
     </div>
   </div>
 </section>
 
 <!-- ================= REMARKS / SIGN-OFF ================= -->
 <section class="sheet" id="sec-sign">
-  <h2><span class="num">8</span> Remarks, deviations and approval</h2>
+  <h2><span class="num">6</span> Remarks, deviations and approval</h2>
   <div class="grid">
     <label class="field wide"><span>Deviations from ASTM C749-08 procedure</span><textarea data-bind="meta.deviations" rows="2"></textarea></label>
     <label class="field wide"><span>Remarks / observations (fracture appearance, anomalies)</span><textarea data-bind="meta.remarks" rows="3"></textarea></label>
@@ -472,8 +460,7 @@ details.paste summary{cursor:pointer;font-weight:600;font-size:13px}
    Units are fixed: mm, N, MPa, strain in mm/mm.
    ===================================================================== */
 
-const LS_KEY = "c749-tensile-report-v2";
-const AXES = ["X","Y","Z"];
+const LS_KEY = "c749-tensile-report-v3";
 const FRACTURE = [
   ["gauge","Within gauge length"],
   ["transition","Gauge-to-fillet transition"],
@@ -493,27 +480,18 @@ const METRICS = [
   { k:"modYoung",    label:"Modulus (Young's Tensile stress 0.01% - 0.1%)", unit:"MPa", dp:0 },
   { k:"modE",        label:"Modulus (E-Modulus)",                unit:"MPa",   dp:0 }
 ];
-const MET = Object.fromEntries(METRICS.map(m=>[m.k,m]));
-function metLabel(m){
-  if(m.k==="modYoung"){ const s=state.settings; return `Modulus (Young's Tensile stress ${fmtPlain(s.yLo)}% - ${fmtPlain(s.yHi)}%)`; }
-  return m.label;
-}
 const metUnit = m => m.unit ? ` (${m.unit})` : "";
 
 /* ---------- state ---------- */
 function blankSpecimen(i){
-  const s = { id:"S-"+String(i).padStart(2,"0"), axis:"Z", x:null, y:null, z:null,
-              d1:null, d2:null, gl:null, ol:null, frac:"gauge", incl:"auto", notes:"", curve:[] };
+  const s = { id:"S-"+String(i).padStart(2,"0"), d1:null, d2:null, gl:null, ol:null, frac:"gauge", incl:"auto", notes:"" };
   METRICS.forEach(m=>s[m.k]=null);
   return s;
 }
 function blankState(){
   return {
     meta:{ status:"Draft" },
-    settings:{ yLo:0.01, yHi:0.1, eLo:0.05, eHi:0.25, breakThr:10, defGL:null, nomD:null, shoulder:null, posAxis:"depth", posMetric:"stressTS" },
-    block:{ id:"", shape:"rect", forming:"molded", grainAxis:"Z", datum:"",
-            L:[null,null,null], W:[null,null,null], T:[null,null,null],
-            D:[null,null,null], H:[null,null,null], mass:null, instrument:"", notes:"" },
+    settings:{ defGL:null, nomD:null },
     specimens:[1,2,3,4,5,6].map(blankSpecimen)
   };
 }
@@ -529,7 +507,6 @@ function normalize(s){
   return {
     meta: Object.assign(b.meta, s.meta||{}),
     settings: Object.assign(b.settings, s.settings||{}),
-    block: Object.assign(b.block, s.block||{}),
     specimens: Array.isArray(s.specimens) ? s.specimens.map((sp,i)=>Object.assign(blankSpecimen(i+1), sp)) : b.specimens
   };
 }
@@ -542,7 +519,6 @@ const esc = s => String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">
 const mean = a => a.length ? a.reduce((s,x)=>s+x,0)/a.length : null;
 const avgNum = a => mean(a.filter(isNum));
 function fmt(v,dp){ if(!isNum(v)) return "—"; return v.toLocaleString(undefined,{minimumFractionDigits:dp,maximumFractionDigits:dp}); }
-function fmtPlain(v){ return isNum(v) ? String(v) : "?"; }
 function getPath(o,p){ return p.split(".").reduce((a,k)=>a==null?undefined:a[k],o); }
 function setPath(o,p,v){ const ks=p.split("."); let a=o; for(let i=0;i<ks.length-1;i++){ a=a[ks[i]]; if(a==null) return; } a[ks[ks.length-1]]=v; }
 function parseNum(t){ if(t==null) return null; t=String(t).trim().replace(/\s/g,""); if(t==="") return null; if(/^-?\d+,\d+$/.test(t)) t=t.replace(",","."); const v=Number(t); return Number.isFinite(v)?v:null; }
@@ -550,10 +526,6 @@ function stats(a){
   const v=a.filter(isNum); const n=v.length; if(!n) return {n:0};
   const m=mean(v); const sd = n>1 ? Math.sqrt(v.reduce((s,x)=>s+(x-m)**2,0)/(n-1)) : null;
   return { n, mean:m, sd, cv: sd!=null && m ? sd/m*100 : null, min:Math.min(...v), max:Math.max(...v) };
-}
-function isDark(){
-  if(window.__forceLight) return false;
-  return getComputedStyle(document.documentElement).getPropertyValue("--mode").trim()==="dark";
 }
 
 /* ---------- input renderers ---------- */
@@ -570,80 +542,22 @@ function sel(path, val, opts, extra=""){
    ===================================================================== */
 let C = null;
 
-function grainLabel(rel){
-  const f = state.block.forming;
-  if(f==="extruded") return rel==="par" ? "WG" : "AG";
-  if(f==="molded"||f==="vibro") return rel==="par" ? "AG" : "WG";
-  return "";
-}
-function relText(rel){
-  const g = grainLabel(rel);
-  return (rel==="par" ? "∥ forming axis" : "⊥ forming axis") + (g ? " · "+g : "");
-}
-
-/* Derive the nine results from a raw record [[strain mm/mm, load N], ...]. */
-function analyseCurve(curve, A){
-  if(!curve || curve.length<3) return null;
-  const st = state.settings, n = curve.length;
-  let im=0; for(let i=1;i<n;i++) if(curve[i][1]>curve[im][1]) im=i;
-  const peak = curve[im][1], thr = isNum(st.breakThr) ? st.breakThr : 10;
-  let ib = im; for(let i=n-1;i>=im;i--){ if(curve[i][1] >= peak*thr/100){ ib=i; break; } }
-  const r = { n, im, ib, loadTS:peak, strainTS:curve[im][0], loadBreak:curve[ib][1], strainBreak:curve[ib][0], dpBreak:ib+1 };
-  if(isNum(A) && A>0){
-    const pts = curve.map(([e,P])=>[e, P/A]);
-    r.pts = pts; r.stressTS = peak/A; r.stressBreak = curve[ib][1]/A;
-    // Young's: least-squares slope of stress on strain between the two strain limits (ascending part)
-    if(isNum(st.yLo) && isNum(st.yHi) && st.yHi>st.yLo){
-      const lo=st.yLo/100, hi=st.yHi/100, sel=pts.slice(0,im+1).filter(p=>p[0]>=lo && p[0]<=hi);
-      if(sel.length>=3){
-        const mx=mean(sel.map(p=>p[0])), my=mean(sel.map(p=>p[1]));
-        let sxy=0,sxx=0; sel.forEach(p=>{ sxy+=(p[0]-mx)*(p[1]-my); sxx+=(p[0]-mx)**2; });
-        if(sxx>0) r.modYoung = sxy/sxx;
-      }
-    }
-    // E-modulus: chord between stresses interpolated at the two strain limits
-    if(isNum(st.eLo) && isNum(st.eHi) && st.eHi>st.eLo){
-      const at = e => { for(let i=1;i<=im;i++){ const [e0,s0]=pts[i-1],[e1,s1]=pts[i]; if(e0<=e && e1>=e) return e1===e0 ? s1 : s0+(e-e0)*(s1-s0)/(e1-e0); } return null; };
-      const lo=st.eLo/100, hi=st.eHi/100, sLo=at(lo), sHi=at(hi);
-      if(isNum(sLo) && isNum(sHi)) r.modE = (sHi-sLo)/(hi-lo);
-    }
-  }
-  return r;
-}
-
 function compute(){
-  const b = state.block, st = state.settings;
-  const c = { blk:{}, sp:[], groups:{} };
-  if(b.shape==="rect"){
-    c.blk.L=stats(b.L); c.blk.W=stats(b.W); c.blk.T=stats(b.T);
-    const L=c.blk.L.mean, W=c.blk.W.mean, T=c.blk.T.mean;
-    c.blk.ext = { X:L, Y:W, Z:T };
-    c.blk.vol = isNum(L)&&isNum(W)&&isNum(T) ? L*W*T/1000 : null;
-  } else {
-    c.blk.D=stats(b.D); c.blk.H=stats(b.H);
-    const D=c.blk.D.mean, H=c.blk.H.mean;
-    c.blk.ext = { X:D, Y:D, Z:H };
-    c.blk.vol = isNum(D)&&isNum(H) ? Math.PI/4*D*D*H/1000 : null;
-  }
-  c.blk.rho = isNum(c.blk.vol) && isNum(b.mass) && c.blk.vol>0 ? b.mass/c.blk.vol : null;
-
+  const st = state.settings, c = { sp:[] };
   for(const s of state.specimens){
     const r = { s, v:{}, src:{}, warn:[] };
-    r.rel = s.axis===b.grainAxis ? "par" : "perp";
     r.dAvg = avgNum([s.d1,s.d2]);
     r.A = isNum(r.dAvg) ? Math.PI*r.dAvg*r.dAvg/4 : null;
-    r.cv = analyseCurve(s.curve, r.A);
     for(const m of METRICS){
       if(isNum(s[m.k])){ r.v[m.k]=s[m.k]; r.src[m.k]="entered"; }
       else if(m.k==="strainGL" && isNum(st.defGL)){ r.v[m.k]=st.defGL; r.src[m.k]="default"; }
-      else if(r.cv && isNum(r.cv[m.k])){ r.v[m.k]=r.cv[m.k]; r.src[m.k]="record"; }
       else { r.v[m.k]=null; r.src[m.k]=""; }
     }
-    // tensile strength used for ranking, map colour and Weibull
+    // tensile strength used for the Weibull analysis
     r.sigma = isNum(r.v.stressTS) ? r.v.stressTS : isNum(r.v.stressBreak) ? r.v.stressBreak
             : (isNum(r.v.loadBreak) && isNum(r.A) ? r.v.loadBreak/r.A : null);
     r.tested = METRICS.some(m=>m.k!=="strainGL" && isNum(r.v[m.k]));
-    r.included = isNum(r.sigma) && (s.incl==="yes" || (s.incl==="auto" && s.frac==="gauge"));
+    r.included = r.tested && (s.incl==="yes" || (s.incl==="auto" && s.frac==="gauge"));
     // consistency checks
     r.calcBreak = isNum(r.v.loadBreak) && isNum(r.A) ? r.v.loadBreak/r.A : null;
     r.dev = isNum(r.calcBreak) && isNum(r.v.stressBreak) && r.v.stressBreak ? (r.calcBreak/r.v.stressBreak-1)*100 : null;
@@ -651,54 +565,12 @@ function compute(){
     if(isNum(r.v.stressBreak) && isNum(r.v.stressTS) && r.v.stressBreak > r.v.stressTS*1.0001) r.warn.push("Stress at break exceeds tensile strength");
     if(isNum(r.v.strainBreak) && isNum(r.v.strainTS) && r.v.strainTS > r.v.strainBreak*1.0001) r.warn.push("Strain at tensile strength exceeds strain at break");
     if(isNum(r.v.strainBreak) && r.v.strainBreak > 0.05) r.warn.push("Strain at break above 0.05 mm/mm: check that strain is in mm/mm, not %");
-
-    // position checks
-    r.depth = null; r.fit = "na"; r.fitMsg = "Enter position";
-    const ext = c.blk.ext, pos = { X:s.x, Y:s.y, Z:s.z };
-    const haveDims = AXES.every(a=>isNum(ext[a])), havePos = AXES.every(a=>isNum(pos[a]));
-    if(havePos && haveDims){
-      const sd = isNum(st.shoulder) ? st.shoulder : (isNum(r.dAvg)? r.dAvg : 0), half = {};
-      AXES.forEach(a=>half[a] = a===s.axis ? (isNum(s.ol)? s.ol/2 : 0) : sd/2);
-      let ok = true;
-      if(b.shape==="rect"){
-        AXES.forEach(a=>{ if(pos[a]-half[a] < -1e-9 || pos[a]+half[a] > ext[a]+1e-9) ok=false; });
-        r.depth = Math.min(...AXES.map(a=>Math.min(pos[a], ext[a]-pos[a])));
-      } else {
-        const R = ext.X/2, H = ext.Z;
-        if(pos.Z-half.Z < -1e-9 || pos.Z+half.Z > H+1e-9) ok=false;
-        for(const sx of [-1,1]) for(const sy of [-1,1]) if(Math.hypot(pos.X+sx*half.X, pos.Y+sy*half.Y) > R+1e-9) ok=false;
-        r.depth = Math.min(R - Math.hypot(pos.X,pos.Y), pos.Z, H-pos.Z);
-      }
-      r.fit = ok ? "ok" : "bad";
-      r.fitMsg = ok ? "Inside sample" : "Extends outside sample";
-      if(ok && !isNum(s.ol)){ r.fit="warn"; r.fitMsg="Centre inside · enter overall length"; }
-    } else if(havePos && !haveDims){ r.fitMsg = "Enter sample dimensions"; }
     c.sp.push(r);
   }
-  // overlap check between specimens (axis-aligned envelopes)
-  const boxes = c.sp.map(r=>{
-    const s=r.s; if(!AXES.every(a=>isNum(s[a.toLowerCase()]))||!isNum(s.ol)) return null;
-    const sd = isNum(st.shoulder) ? st.shoulder : (isNum(r.dAvg)?r.dAvg:0), bx={};
-    AXES.forEach(a=>{ const h = a===s.axis ? s.ol/2 : sd/2, p=s[a.toLowerCase()]; bx[a]=[p-h,p+h]; });
-    return bx;
-  });
-  for(let i=0;i<boxes.length;i++) for(let j=i+1;j<boxes.length;j++){
-    const p=boxes[i], q=boxes[j]; if(!p||!q) continue;
-    if(AXES.every(a=>p[a][0] < q[a][1]-1e-9 && q[a][0] < p[a][1]-1e-9)){
-      for(const k of [i,j]){ const r=c.sp[k]; if(r.fit!=="bad"){ r.fit="warn"; r.fitMsg="Overlaps "+c.sp[k===i?j:i].s.id; } }
-    }
-  }
-
   const inc = c.sp.filter(r=>r.included);
-  const grp = (name, rows) => {
-    const g = { name, rows, m:{} };
-    METRICS.forEach(m=>g.m[m.k]=stats(rows.map(r=>r.v[m.k])));
-    g.weib = weibull(rows.map(r=>r.sigma));
-    return g;
-  };
-  c.groups.all = grp("All included", inc);
-  c.groups.par = grp(relText("par"), inc.filter(r=>r.rel==="par"));
-  c.groups.perp = grp(relText("perp"), inc.filter(r=>r.rel==="perp"));
+  c.all = { rows:inc, m:{} };
+  METRICS.forEach(m=>c.all.m[m.k]=stats(inc.map(r=>r.v[m.k])));
+  c.all.weib = weibull(inc.map(r=>r.sigma));
   c.nTotal = c.sp.length; c.nTested = c.sp.filter(r=>r.tested).length;
   C = c; return c;
 }
@@ -717,66 +589,32 @@ function weibull(arr){
 /* =====================================================================
    RENDER: tables
    ===================================================================== */
-function renderBlock(){
-  const b = state.block;
-  const rows = b.shape==="rect"
-    ? [["L","Length, L (X direction)"],["W","Width, W (Y direction)"],["T","Thickness / height, T (Z direction)"]]
-    : [["D","Diameter, D (X–Y plane)"],["H","Length, H (Z direction, along billet axis)"]];
-  let h = `<tr><th>Dimension (mm)</th><th class="r">Reading 1</th><th class="r">Reading 2</th><th class="r">Reading 3</th><th class="r">Mean</th><th class="r">Range</th></tr>`;
-  for(const [k,lab] of rows){
-    h += `<tr><td>${lab}</td>${[0,1,2].map(i=>`<td>${numInp(`block.${k}.${i}`, b[k][i], `aria-label="${lab} reading ${i+1}"`)}</td>`).join("")}
-      <td class="out" data-out="blk.${k}.mean">—</td><td class="out" data-out="blk.${k}.range">—</td></tr>`;
-  }
-  $("#blockTable").innerHTML = h;
-  $("#locHintShape").innerHTML = b.shape==="rect"
-    ? "Rectangular block: origin at the datum corner; X runs along L, Y along W, Z along T."
-    : "Cylinder: X and Y are measured from the billet's central axis (they can be negative); Z is measured along the axis from the datum end face.";
-}
-
 function renderSpecTables(){
-  const sp = state.specimens, axisOpts = AXES.map(a=>[a,a]);
-  // locations
-  let h = `<tr><th>Specimen ID</th><th>Long axis</th><th class="r">X centre<small>mm</small></th><th class="r">Y centre<small>mm</small></th><th class="r">Z centre<small>mm</small></th>
-           <th>Orientation<small>vs. forming axis</small></th><th class="r">Depth below surface<small>mm</small></th><th>Position check</th><th class="no-print"></th></tr>`;
-  sp.forEach((s,i)=>{
-    h += `<tr>
-      <td>${txtInp(`specimens.${i}.id`, s.id, `aria-label="Specimen ID row ${i+1}" style="min-width:70px;font-weight:600"`)}</td>
-      <td>${sel(`specimens.${i}.axis`, s.axis, axisOpts, `aria-label="Long axis"`)}</td>
-      <td>${numInp(`specimens.${i}.x`, s.x, `aria-label="X"`)}</td>
-      <td>${numInp(`specimens.${i}.y`, s.y, `aria-label="Y"`)}</td>
-      <td>${numInp(`specimens.${i}.z`, s.z, `aria-label="Z"`)}</td>
-      <td class="out l" data-out="s${i}.rel">—</td>
-      <td class="out" data-out="s${i}.depth">—</td>
-      <td data-out="s${i}.fit" data-html>—</td>
-      <td class="no-print"><button class="icon danger" data-del="${i}" title="Remove specimen" aria-label="Remove specimen ${esc(s.id)}">✕</button></td>
-    </tr>`;
-  });
-  $("#locTable").innerHTML = h;
-
-  // dimensions
-  h = `<tr><th>Specimen</th><th class="r">Gauge dia. reading 1<small>mm</small></th><th class="r">Gauge dia. reading 2<small>mm</small></th>
+  const sp = state.specimens;
+  // dimensions (also where specimens are named, added and removed)
+  let h = `<tr><th>Specimen ID</th><th class="r">Gauge dia. reading 1<small>mm</small></th><th class="r">Gauge dia. reading 2<small>mm</small></th>
        <th class="r">Mean dia.<small>mm</small></th><th class="r">Area<small>mm²</small></th>
-       <th class="r">Reduced-section length<small>mm</small></th><th class="r">Overall length<small>mm</small></th></tr>`;
+       <th class="r">Reduced-section length<small>mm</small></th><th class="r">Overall length<small>mm</small></th><th class="no-print"></th></tr>`;
   sp.forEach((s,i)=>{
-    h += `<tr><td class="id" data-out="s${i}.id">${esc(s.id)}</td>
+    h += `<tr><td>${txtInp(`specimens.${i}.id`, s.id, `aria-label="Specimen ID row ${i+1}" style="min-width:70px;font-weight:600"`)}</td>
       <td>${numInp(`specimens.${i}.d1`, s.d1)}</td><td>${numInp(`specimens.${i}.d2`, s.d2)}</td>
       <td class="out" data-out="s${i}.dAvg">—</td><td class="out" data-out="s${i}.A">—</td>
-      <td>${numInp(`specimens.${i}.gl`, s.gl)}</td><td>${numInp(`specimens.${i}.ol`, s.ol)}</td></tr>`;
+      <td>${numInp(`specimens.${i}.gl`, s.gl)}</td><td>${numInp(`specimens.${i}.ol`, s.ol)}</td>
+      <td class="no-print"><button class="icon danger" data-del="${i}" title="Remove specimen" aria-label="Remove specimen ${esc(s.id)}">✕</button></td></tr>`;
   });
   $("#dimTable").innerHTML = h;
 
   // results: the nine software values
-  h = `<tr><th>Specimen</th>${METRICS.map(m=>`<th class="r" data-mlabel="${m.k}">${esc(metLabel(m))}<small>${m.unit||"index"}</small></th>`).join("")}</tr>`;
+  h = `<tr><th>Specimen</th>${METRICS.map(m=>`<th class="r">${esc(m.label)}<small>${m.unit||"index"}</small></th>`).join("")}</tr>`;
   sp.forEach((s,i)=>{
     h += `<tr><td class="id" data-out="s${i}.id">${esc(s.id)}</td>${METRICS.map(m=>`<td>${numInp(`specimens.${i}.${m.k}`, s[m.k], `data-ph="s${i}.ph.${m.k}" aria-label="${esc(m.label)}"`)}</td>`).join("")}</tr>`;
   });
   $("#resTable").innerHTML = h;
 
   // acceptance
-  h = `<tr><th>Specimen</th><th>Orientation</th><th>Fracture location</th><th>Include</th><th class="r">Load ÷ area<small>MPa</small></th><th class="r">Difference from stress at break<small>%</small></th><th>Status</th><th>Notes</th></tr>`;
+  h = `<tr><th>Specimen</th><th>Fracture location</th><th>Include</th><th class="r">Load ÷ area<small>MPa</small></th><th class="r">Difference from stress at break<small>%</small></th><th>Status</th><th>Notes</th></tr>`;
   sp.forEach((s,i)=>{
     h += `<tr><td class="id" data-out="s${i}.id">${esc(s.id)}</td>
-      <td class="out l" data-out="s${i}.relShort">—</td>
       <td>${sel(`specimens.${i}.frac`, s.frac, FRACTURE)}</td>
       <td>${sel(`specimens.${i}.incl`, s.incl, [["auto","Auto"],["yes","Yes"],["no","No"]])}</td>
       <td class="out" data-out="s${i}.calc">—</td>
@@ -785,47 +623,33 @@ function renderSpecTables(){
       <td>${txtInp(`specimens.${i}.notes`, s.notes, `style="min-width:160px"`)}</td></tr>`;
   });
   $("#accTable").innerHTML = h;
-
-  const cs = $("#curveSpec"), prev = cs.value;
-  cs.innerHTML = sp.map((s,i)=>`<option value="${i}">${esc(s.id)}</option>`).join("");
-  if(prev!=="" && +prev < sp.length) cs.value = prev;
 }
 
 function renderStatic(){
   $("#pasteOrder").textContent = "[Specimen ID], " + METRICS.map(m=>m.label).join(", ");
-  $("#posMetric").innerHTML = METRICS.filter(m=>m.k!=="dpBreak"&&m.k!=="strainGL").map(m=>`<option value="${m.k}">${esc(m.label)}</option>`).join("");
   $$("[data-bind]").forEach(el=>{
-    if(el.closest("#locTable,#dimTable,#resTable,#accTable,#blockTable")) return;
+    if(el.closest("#dimTable,#resTable,#accTable")) return;
     const v = getPath(state, el.dataset.bind);
     if(el.hasAttribute("data-num")) el.value = isNum(v) ? v : "";
     else el.value = v ?? "";
   });
 }
 
-function renderAll(){ renderBlock(); renderSpecTables(); renderStatic(); refresh(); }
+function renderAll(){ renderSpecTables(); renderStatic(); refresh(); }
 
 /* ---------- outputs ---------- */
 function refresh(){
   const c = compute(), out = {};
-  for(const k of ["L","W","T","D","H"]){
-    if(c.blk[k]){ out[`blk.${k}.mean`] = fmt(c.blk[k].mean, 2); out[`blk.${k}.range`] = c.blk[k].n>1 ? fmt(c.blk[k].max-c.blk[k].min, 2) : "—"; }
-  }
-  out["blk.vol"] = fmt(c.blk.vol, 1);
-  out["blk.rho"] = fmt(c.blk.rho, 3);
   out["meta.reportNo"] = esc(state.meta.reportNo||"—");
   out["meta.revision"] = esc(state.meta.revision||"—");
   c.sp.forEach((r,i)=>{
     const s=r.s;
     out[`s${i}.id`] = esc(s.id);
-    out[`s${i}.rel`] = relText(r.rel);
-    out[`s${i}.relShort`] = (r.rel==="par"?"∥":"⊥") + (grainLabel(r.rel)?" "+grainLabel(r.rel):"") + " · " + s.axis;
-    out[`s${i}.depth`] = fmt(r.depth, 1);
-    out[`s${i}.fit`] = `<span class="st ${r.fit}">${esc(r.fitMsg)}</span>`;
     out[`s${i}.dAvg`] = fmt(r.dAvg, 3);
     out[`s${i}.A`] = fmt(r.A, 2);
     out[`s${i}.calc`] = fmt(r.calcBreak, 2);
     out[`s${i}.dev`] = isNum(r.dev) ? (r.dev>0?"+":"")+fmt(r.dev,2) : "—";
-    METRICS.forEach(m=>{ out[`s${i}.ph.${m.k}`] = isNum(s[m.k]) ? "" : (r.src[m.k] ? fmt(r.v[m.k], m.dp).replace(/,/g,"") : ""); });
+    METRICS.forEach(m=>{ out[`s${i}.ph.${m.k}`] = r.src[m.k]==="default" ? String(r.v[m.k]) : ""; });
     let st;
     if(!r.tested) st = `<span class="st na">Not tested</span>`;
     else if(r.included) st = `<span class="st ok">Included</span>`;
@@ -839,33 +663,16 @@ function refresh(){
     else el.textContent = out[k];
   });
   $$("[data-ph]").forEach(el=>{ el.placeholder = out[el.dataset.ph] || ""; });
-  $$("[data-mlabel]").forEach(el=>{ el.firstChild.textContent = metLabel(MET[el.dataset.mlabel]); });
   $$("input[data-num]").forEach(el=>{ el.classList.toggle("bad", el.value.trim()!=="" && parseNum(el.value)===null); });
-  $$("#curveSpec option").forEach((o,i)=>{ if(state.specimens[i]) o.textContent = state.specimens[i].id; });
   $("#statusBadge").textContent = state.meta.status || "Draft";
-  renderCurveTable(); renderSummary(); renderCharts(); renderMap();
-}
-
-function renderCurveTable(){
-  let h = `<tr><th>Specimen</th><th class="r">Data points</th><th class="r">Max load<small>N</small></th><th class="r">Strain 1 at max load<small>mm/mm</small></th>
-           <th class="r">Break point<small>data point</small></th><th class="r">Load at break<small>N</small></th><th class="r">Strain 1 at break<small>mm/mm</small></th>
-           <th class="r">Young's ${fmtPlain(state.settings.yLo)}–${fmtPlain(state.settings.yHi)} %<small>MPa</small></th><th class="r">E-modulus ${fmtPlain(state.settings.eLo)}–${fmtPlain(state.settings.eHi)} %<small>MPa</small></th></tr>`;
-  C.sp.forEach(r=>{
-    const cv=r.cv, n=r.s.curve?.length||0;
-    const na = n && !isNum(r.A) ? "enter diameter" : "—";
-    h += `<tr><td class="id">${esc(r.s.id)}</td><td class="r">${n||"—"}</td>
-      <td class="r">${cv?fmt(cv.loadTS,1):"—"}</td><td class="r">${cv?fmt(cv.strainTS,5):"—"}</td>
-      <td class="r">${cv?cv.dpBreak:"—"}</td><td class="r">${cv?fmt(cv.loadBreak,1):"—"}</td><td class="r">${cv?fmt(cv.strainBreak,5):"—"}</td>
-      <td class="r">${cv?(isNum(cv.modYoung)?fmt(cv.modYoung,0):na):"—"}</td><td class="r">${cv?(isNum(cv.modE)?fmt(cv.modE,0):na):"—"}</td></tr>`;
-  });
-  $("#curveTable").innerHTML = h;
+  renderSummary(); renderCharts();
 }
 
 /* ---------- summary ---------- */
 function renderSummary(){
-  const g=C.groups, a=g.all;
+  const a=C.all;
   const tile = (lab,val,unit,det)=>`<div class="tile"><div class="lab">${lab}</div><div class="val">${val}${unit?`<small>${unit}</small>`:""}</div><div class="det">${det||"&nbsp;"}</div></div>`;
-  const sd = (st,dp,u="") => st.n>1 ? `SD ${fmt(st.sd,dp)}${u} · CV ${fmt(st.cv,1)} %` : "";
+  const sd = (st,dp) => st.n>1 ? `SD ${fmt(st.sd,dp)} · CV ${fmt(st.cv,1)} %` : "";
   const ts=a.m.stressTS, sb=a.m.stressBreak, ets=a.m.strainTS, my=a.m.modYoung, me=a.m.modE;
   $("#tiles").innerHTML =
     tile("Tensile stress at tensile strength", fmt(ts.mean,2), "MPa", sd(ts,2)) +
@@ -879,23 +686,11 @@ function renderSummary(){
   let h = `<tr><th>Result</th><th>Unit</th><th class="r">n</th><th class="r">Mean</th><th class="r">SD</th><th class="r">CV<small>%</small></th><th class="r">Min</th><th class="r">Max</th></tr>`;
   for(const m of METRICS){
     const s=a.m[m.k], dp=m.dp;
-    h += `<tr><td>${esc(metLabel(m))}</td><td>${m.unit||"—"}</td><td class="r">${s.n||0}</td><td class="r"><b>${s.n?fmt(s.mean,dp+(m.k==="dpBreak"?1:0)):"—"}</b></td>
+    h += `<tr><td>${esc(m.label)}</td><td>${m.unit||"—"}</td><td class="r">${s.n||0}</td><td class="r"><b>${s.n?fmt(s.mean,dp+(m.k==="dpBreak"?1:0)):"—"}</b></td>
       <td class="r">${s.n>1?fmt(s.sd,dp+1):"—"}</td><td class="r">${s.n>1&&isNum(s.cv)?fmt(s.cv,1):"—"}</td><td class="r">${s.n?fmt(s.min,dp):"—"}</td><td class="r">${s.n?fmt(s.max,dp):"—"}</td></tr>`;
   }
   h += `<tr><td>Weibull modulus m / characteristic strength σ₀ (tensile stress at tensile strength)</td><td>— / MPa</td><td class="r">${a.weib?a.weib.n:0}</td><td class="r" colspan="5" style="text-align:left">${a.weib?`m = ${fmt(a.weib.m,2)} · σ₀ = ${fmt(a.weib.s0,2)} MPa · R² = ${fmt(a.weib.r2,3)}`:"needs ≥ 3 included specimens"}</td></tr>`;
   $("#sumTable").innerHTML = h;
-
-  const p=g.par, q=g.perp;
-  h = `<tr><th>Result</th><th>Unit</th><th class="r">n<small>${esc(p.name)}</small></th><th class="r">Mean<small>${esc(p.name)}</small></th><th class="r">SD</th>
-       <th class="r">n<small>${esc(q.name)}</small></th><th class="r">Mean<small>${esc(q.name)}</small></th><th class="r">SD</th><th class="r">Ratio<small>∥ / ⊥</small></th></tr>`;
-  for(const m of METRICS){
-    const a1=p.m[m.k], b1=q.m[m.k], dp=m.dp;
-    h += `<tr><td>${esc(metLabel(m))}</td><td>${m.unit||"—"}</td>
-      <td class="r">${a1.n||0}</td><td class="r">${a1.n?fmt(a1.mean,dp):"—"}</td><td class="r">${a1.n>1?fmt(a1.sd,dp+1):"—"}</td>
-      <td class="r">${b1.n||0}</td><td class="r">${b1.n?fmt(b1.mean,dp):"—"}</td><td class="r">${b1.n>1?fmt(b1.sd,dp+1):"—"}</td>
-      <td class="r">${a1.n&&b1.n&&b1.mean?fmt(a1.mean/b1.mean,3):"—"}</td></tr>`;
-  }
-  $("#grpTable").innerHTML = h;
 }
 
 /* =====================================================================
@@ -914,31 +709,16 @@ function niceScale(min, max, count=5, zero=false){
 }
 const lin = (d0,d1,r0,r1) => v => r0 + (v-d0)*(r1-r0)/((d1-d0)||1);
 function tickFmt(t, dp){ return Math.abs(t)>=10000 ? fmt(t/1000, Math.max(0,dp-3))+"K" : fmt(t,dp); }
-
-function frame(o){
-  let s = "";
-  for(const t of o.ys.ticks){ const y=o.sy(t);
-    s += `<line class="grid" x1="${o.m.l}" x2="${o.W-o.m.r}" y1="${y}" y2="${y}"/><text class="tick" x="${o.m.l-7}" y="${y}" text-anchor="end" dominant-baseline="middle">${o.fy(t)}</text>`; }
-  for(const t of o.xs.ticks){ const x=o.sx(t);
-    s += `<text class="tick" x="${x}" y="${o.H-o.m.b+16}" text-anchor="middle">${o.fx(t)}</text>`; }
-  s += `<line class="axis" x1="${o.m.l}" x2="${o.W-o.m.r}" y1="${o.H-o.m.b}" y2="${o.H-o.m.b}"/>`;
-  s += `<text class="alab" x="${(o.m.l+o.W-o.m.r)/2}" y="${o.H-4}" text-anchor="middle">${o.xLabel}</text>`;
-  s += `<text class="alab" transform="translate(13 ${(o.m.t+o.H-o.m.b)/2}) rotate(-90)" text-anchor="middle">${o.yLabel}</text>`;
-  return s;
-}
 const svgOpen = (W,H,label) => `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}">`;
 function emptyChart(W,H,msg,label){ return `${svgOpen(W,H,label)}<text class="empty" x="${W/2}" y="${H/2}" text-anchor="middle">${esc(msg)}</text></svg>`; }
-const clsFor = r => r.included ? r.rel : "ex";
+const clsFor = r => r.included ? "par" : "ex";
 
-function renderLegends(){
-  const anyEx = C.sp.some(r=>r.tested && !r.included);
-  const base = `<span><i style="background:var(--s1)"></i>${esc(relText("par"))}</span><span><i style="background:var(--s2)"></i>${esc(relText("perp"))}</span>`;
-  const ex = anyEx ? `<span><i style="background:var(--excl)"></i>Excluded</span>` : "";
-  $$('[data-legend="orient"]').forEach(el=>el.innerHTML = base + ex);
-  $$('[data-legend="orient-fit"]').forEach(el=>el.innerHTML = base + `<span><i class="line" style="background:var(--ink2)"></i>Weibull fit (all included)</span>`);
-}
 function renderCharts(){
-  renderLegends(); renderMetricCharts(); chartSS(); chartWeib(); chartPos();
+  const anyEx = C.sp.some(r=>r.tested && !r.included);
+  $$('[data-legend="incl"]').forEach(el=>el.innerHTML = anyEx
+    ? `<span><i style="background:var(--s1)"></i>Included</span><span><i style="background:var(--excl)"></i>Excluded</span><span><i class="line" style="background:var(--ink2)"></i>Mean of included, band ±1 SD</span>`
+    : `<span><i class="line" style="background:var(--ink2)"></i>Mean, band ±1 SD</span>`);
+  renderMetricCharts(); chartWeib();
 }
 
 /* --- one column chart per reported result --- */
@@ -950,31 +730,28 @@ function colPath(x,w,y0,y1,r){
 function renderMetricCharts(){
   const box = $("#metricCharts");
   if(box.children.length !== METRICS.length){
-    box.innerHTML = METRICS.map(m=>`<div class="chart"><h4 data-mtitle="${m.k}"></h4><div class="cap" data-mcap="${m.k}"></div><div data-mchart="${m.k}"></div></div>`).join("");
+    box.innerHTML = METRICS.map(m=>`<div class="chart"><h4>${esc(m.label+metUnit(m))}</h4><div class="cap" data-mcap="${m.k}"></div><div data-mchart="${m.k}"></div></div>`).join("");
   }
   for(const m of METRICS){
-    $(`[data-mtitle="${m.k}"]`, box).textContent = metLabel(m) + metUnit(m);
-    const a = C.groups.all.m[m.k];
+    const a = C.all.m[m.k];
     $(`[data-mcap="${m.k}"]`, box).textContent = a.n ? `Mean ${fmt(a.mean,m.dp)}${m.unit?" "+m.unit:""}${a.n>1?` · SD ${fmt(a.sd,m.dp+1)} · CV ${fmt(a.cv,1)} %`:""} · n = ${a.n}` : "No included results yet.";
     $(`[data-mchart="${m.k}"]`, box).innerHTML = columnChart(m);
   }
 }
 function columnChart(m){
   const rows = C.sp.filter(r=>isNum(r.v[m.k])), n=rows.length, W=460, H=250, mg={t:14,r:52,b:46,l:58};
-  const label = metLabel(m);
-  if(!n) return emptyChart(W,H,"No values entered",label);
-  const a = C.groups.all.m[m.k];
+  if(!n) return emptyChart(W,H,"No values entered",m.label);
+  const a = C.all.m[m.k];
   const vals = rows.map(r=>r.v[m.k]);
   const hiV = Math.max(...vals, a.n>1? a.mean+a.sd : -Infinity), loV = Math.min(...vals, 0);
   const ys = niceScale(loV, hiV*1.04, 4, true), sy = lin(ys.lo,ys.hi,H-mg.b,mg.t);
   const band = (W-mg.l-mg.r)/n, bw = Math.min(24, band*0.62);
-  const tdp = Math.max(ys.dp, 0);
-  let s = svgOpen(W,H,label + " by specimen");
-  for(const t of ys.ticks){ const y=sy(t); s += `<line class="grid" x1="${mg.l}" x2="${W-mg.r}" y1="${y}" y2="${y}"/><text class="tick" x="${mg.l-7}" y="${y}" text-anchor="end" dominant-baseline="middle">${tickFmt(t,tdp)}</text>`; }
+  let s = svgOpen(W,H,m.label + " by specimen");
+  for(const t of ys.ticks){ const y=sy(t); s += `<line class="grid" x1="${mg.l}" x2="${W-mg.r}" y1="${y}" y2="${y}"/><text class="tick" x="${mg.l-7}" y="${y}" text-anchor="end" dominant-baseline="middle">${tickFmt(t,ys.dp)}</text>`; }
   if(a.n>1) s += `<rect class="band" x="${mg.l}" width="${W-mg.l-mg.r}" y="${sy(a.mean+a.sd)}" height="${Math.max(0,sy(a.mean-a.sd)-sy(a.mean+a.sd))}"/>`;
   rows.forEach((r,i)=>{
     const x = mg.l + band*i + (band-bw)/2, v=r.v[m.k];
-    const tip = `${r.s.id} · ${relText(r.rel)}\n${label}\n${fmt(v,m.dp)}${m.unit?" "+m.unit:""}${r.src[m.k]==="record"?" (from record)":r.src[m.k]==="default"?" (default)":""}\n${r.included?"Included":"Excluded"}`;
+    const tip = `${r.s.id}\n${m.label}\n${fmt(v,m.dp)}${m.unit?" "+m.unit:""}${r.src[m.k]==="default"?" (default)":""}\n${r.included?"Included":"Excluded"}`;
     s += `<path class="${clsFor(r)}" d="${colPath(x,bw,sy(0),sy(v),4)}" tabindex="0" data-tip="${esc(tip)}"/>`;
     if(n<=20){ const lx=x+bw/2, ly=H-mg.b+12; s += `<text class="tick" x="${lx}" y="${ly}" text-anchor="end" transform="rotate(-40 ${lx} ${ly})">${esc(r.s.id)}</text>`; }
   });
@@ -986,56 +763,14 @@ function columnChart(m){
   return s + `</svg>`;
 }
 
-/* --- stress-strain --- */
-function chartSS(){
-  const W=560, H=330, m={t:12,r:18,b:42,l:56};
-  const series = C.sp.filter(r=>r.cv && r.cv.pts);
-  const box = $("#chSS");
-  if(!series.length){ box.innerHTML = emptyChart(W,H,"Import load–strain records in Section 6 to see curves","Stress–strain curves"); return; }
-  const xmax = Math.max(...series.map(r=>r.cv.pts[r.cv.ib][0]));
-  const ymax = Math.max(...series.map(r=>r.cv.stressTS));
-  const xs = niceScale(0,xmax,5,true), ys = niceScale(0,ymax,5,true);
-  const sx = lin(xs.lo,xs.hi,m.l,W-m.r), sy = lin(ys.lo,ys.hi,H-m.b,m.t);
-  let s = svgOpen(W,H,"Stress–strain curves") + frame({W,H,m,xs,ys,sx,sy,xLabel:"Strain 1 (mm/mm)",yLabel:"Tensile stress (MPa)",fx:t=>fmt(t,xs.dp),fy:t=>fmt(t,ys.dp)});
-  const order = [...series].sort((a,b)=>(a.included?1:0)-(b.included?1:0));
-  const plotPts = r => r.cv.pts.slice(0, r.cv.ib+1);
-  order.forEach(r=>{
-    const d = plotPts(r).map((p,i)=>(i?"L":"M")+sx(p[0]).toFixed(1)+" "+sy(p[1]).toFixed(1)).join("");
-    s += `<path class="ln l-${clsFor(r)}" data-sid="${C.sp.indexOf(r)}" d="${d}"/>`;
-  });
-  order.forEach(r=>{
-    const p = r.cv.pts[r.cv.ib];
-    s += `<circle class="dot ${clsFor(r)}" cx="${sx(p[0])}" cy="${sy(p[1])}" r="4.5" tabindex="0" data-tip="${esc(r.s.id)} · break (data point ${r.cv.dpBreak})\nStress ${fmt(p[1],2)} MPa\nStrain ${fmt(p[0],5)} mm/mm"/>`;
-  });
-  s += `<circle id="ssHot" r="5" class="dot" style="display:none;fill:var(--ink)"/>`;
-  s += `<rect id="ssHit" x="${m.l}" y="${m.t}" width="${W-m.l-m.r}" height="${H-m.t-m.b}" fill="transparent"/></svg>`;
-  box.innerHTML = s;
-  const svg = box.querySelector("svg"), hit = $("#ssHit", svg), hot = $("#ssHot", svg);
-  const clear = ()=>{ $$("path.ln",svg).forEach(pa=>pa.classList.remove("dim","hot")); hot.style.display="none"; hideTip(); };
-  hit.addEventListener("mousemove", e=>{
-    const pt = svgPoint(svg, e); let best=null, bd=1e9;
-    for(const r of series) for(const p of plotPts(r)){
-      const dx=sx(p[0])-pt.x, dy=sy(p[1])-pt.y, dd=dx*dx+dy*dy; if(dd<bd){ bd=dd; best={r,p}; }
-    }
-    if(best && bd < 40*40){
-      const idx = C.sp.indexOf(best.r);
-      $$("path.ln",svg).forEach(pa=>{ pa.classList.toggle("dim", +pa.dataset.sid!==idx); pa.classList.toggle("hot", +pa.dataset.sid===idx); });
-      hot.setAttribute("cx",sx(best.p[0])); hot.setAttribute("cy",sy(best.p[1])); hot.style.display="";
-      showTip(`${best.r.s.id} (${best.r.rel==="par"?"∥":"⊥"})\nStrain 1 ${fmt(best.p[0],5)} mm/mm\nStress ${fmt(best.p[1],2)} MPa`, e);
-    } else clear();
-  });
-  hit.addEventListener("mouseleave", clear);
-}
-function svgPoint(svg, e){ const p = svg.createSVGPoint(); p.x=e.clientX; p.y=e.clientY; return p.matrixTransform(svg.getScreenCTM().inverse()); }
-
 /* --- Weibull --- */
 function chartWeib(){
-  const w = C.groups.all.weib, W=560, H=330, m={t:14,r:18,b:42,l:56};
-  if(!w){ $("#chWeib").innerHTML = emptyChart(W,H,"At least 3 included specimens are needed","Weibull plot"); $("#weibCap").textContent="Included specimens, all orientations."; return; }
-  $("#weibCap").textContent = `Included specimens (n = ${w.n}). m = ${fmt(w.m,1)}, σ₀ = ${fmt(w.s0,2)} MPa, R² = ${fmt(w.r2,3)}.`;
-  const smin = Math.min(...w.pts.map(p=>p.s)), smax = Math.max(...w.pts.map(p=>p.s));
+  const w = C.all.weib, W=1040, H=360, m={t:14,r:18,b:42,l:56};
+  if(!w){ $("#chWeib").innerHTML = emptyChart(W,H,"At least 3 included specimens are needed","Weibull plot"); $("#weibCap").textContent="Included specimens."; return; }
+  $("#weibCap").textContent = `Included specimens (n = ${w.n}). Dots are specimens; the line is the least-squares fit. m = ${fmt(w.m,1)}, σ₀ = ${fmt(w.s0,2)} MPa, R² = ${fmt(w.r2,3)}.`;
+  const smin = w.pts[0].s, smax = w.pts[w.n-1].s;
   const pad = (smax-smin)*0.08 || smax*0.05;
-  const xs = niceScale(smin-pad, smax+pad, 5);
+  const xs = niceScale(smin-pad, smax+pad, 6);
   const lo = Math.max(xs.lo, smin*0.5), hi = xs.hi;
   const sxl = lin(Math.log(lo),Math.log(hi),m.l,W-m.r), sx = v => sxl(Math.log(v));
   const yv = F => Math.log(Math.log(1/(1-F)));
@@ -1046,146 +781,15 @@ function chartWeib(){
   for(const F of pTicks){ const y=sy(yv(F)); s += `<line class="grid" x1="${m.l}" x2="${W-m.r}" y1="${y}" y2="${y}"/><text class="tick" x="${m.l-7}" y="${y}" text-anchor="end" dominant-baseline="middle">${F===0.632?"63.2":fmt(F*100, F*100<1||F>0.99?1:0)}</text>`; }
   for(const t of xs.ticks.filter(t=>t>=lo)){ s += `<text class="tick" x="${sx(t)}" y="${H-m.b+16}" text-anchor="middle">${fmt(t,xs.dp)}</text>`; }
   s += `<line class="axis" x1="${m.l}" x2="${W-m.r}" y1="${H-m.b}" y2="${H-m.b}"/>`;
-  // fit line, clipped to the plot area
   const xA = Math.log(lo), xB = Math.log(hi), f = x => w.m*x + w.b0, finv = y => (y - w.b0)/w.m;
   let x1=xA, x2=xB; if(f(x1)<yLo) x1=finv(yLo); if(f(x2)>yHi) x2=finv(yHi);
   if(x2>x1) s += `<line class="fitln" x1="${sxl(x1)}" y1="${sy(f(x1))}" x2="${sxl(x2)}" y2="${sy(f(x2))}"/>`;
-  const inc = C.groups.all.rows.filter(r=>isNum(r.sigma)&&r.sigma>0).sort((a,b)=>a.sigma-b.sigma);
+  const inc = C.all.rows.filter(r=>isNum(r.sigma)&&r.sigma>0).sort((a,b)=>a.sigma-b.sigma);
   w.pts.forEach((p,i)=>{ const r = inc[i];
-    s += `<circle class="dot ${r?r.rel:"par"}" cx="${sx(p.s)}" cy="${sy(p.y)}" r="5" tabindex="0" data-tip="${esc(r?r.s.id:"")}\nσ ${fmt(p.s,2)} MPa\nRank ${i+1} of ${w.n} · F = ${fmt(p.F*100,1)} %"/>`; });
+    s += `<circle class="dot par" cx="${sx(p.s)}" cy="${sy(p.y)}" r="5" tabindex="0" data-tip="${esc(r?r.s.id:"")}\nσ ${fmt(p.s,2)} MPa\nRank ${i+1} of ${w.n} · F = ${fmt(p.F*100,1)} %"/>`; });
   s += `<text class="alab" x="${(m.l+W-m.r)/2}" y="${H-4}" text-anchor="middle">Tensile stress at tensile strength (MPa), log scale</text>`;
   s += `<text class="alab" transform="translate(13 ${(m.t+H-m.b)/2}) rotate(-90)" text-anchor="middle">Probability of failure (%)</text></svg>`;
   $("#chWeib").innerHTML = s;
-}
-
-/* --- result vs position --- */
-function chartPos(){
-  const W=560, H=330, mg={t:14,r:18,b:42,l:60};
-  const ax = state.settings.posAxis || "depth", mk = MET[state.settings.posMetric] ? state.settings.posMetric : "stressTS", met = MET[mk];
-  const pos = r => ax==="depth" ? r.depth : r.s[ax.toLowerCase()];
-  const rows = C.sp.filter(r=>isNum(r.v[mk]) && isNum(pos(r)));
-  const axName = ax==="depth" ? "Depth of specimen centre below the nearest surface" : `${ax} coordinate of specimen centre`;
-  $("#posCap").textContent = `${metLabel(met)} vs. ${axName.toLowerCase()} (mm).`;
-  if(!rows.length){ $("#chPos").innerHTML = emptyChart(W,H,"Enter specimen positions and results to see this chart","Result vs position"); return; }
-  const xv = rows.map(pos), yv = rows.map(r=>r.v[mk]);
-  let xmin = Math.min(...xv), xmax = Math.max(...xv);
-  const ext = C.blk.ext[ax], cylXY = state.block.shape==="cyl" && ax!=="Z" && ax!=="depth";
-  if(ax!=="depth" && isNum(ext)){ if(cylXY){ xmin=Math.min(xmin,-ext/2); xmax=Math.max(xmax,ext/2); } else { xmin=Math.min(xmin,0); xmax=Math.max(xmax,ext); } }
-  else xmin = Math.min(0,xmin);
-  const xs = niceScale(xmin,xmax,6), ys = niceScale(0,Math.max(...yv)*1.08,5,true);
-  const sx = lin(xs.lo,xs.hi,mg.l,W-mg.r), sy = lin(ys.lo,ys.hi,H-mg.b,mg.t);
-  let s = svgOpen(W,H,"Result vs position") + frame({W,H,m:mg,xs,ys,sx,sy,xLabel:`${ax==="depth"?"Depth below surface":ax+" position"} (mm)`,yLabel:`${met.unit||"value"}`,fx:t=>fmt(t,xs.dp),fy:t=>tickFmt(t,ys.dp)});
-  if(ax!=="depth" && isNum(ext)){
-    const edges = cylXY ? [-ext/2, ext/2] : [0, ext];
-    edges.forEach(e=>{ s += `<line class="axis" x1="${sx(e)}" x2="${sx(e)}" y1="${mg.t}" y2="${H-mg.b}"/>`; });
-    s += `<text class="tick" x="${sx(edges[1])-4}" y="${mg.t+10}" text-anchor="end">sample face</text>`;
-  }
-  for(const r of rows.slice().sort((a,b)=>(a.included?1:0)-(b.included?1:0))){
-    const cx=sx(pos(r)), cy=sy(r.v[mk]);
-    const tip = `${esc(r.s.id)} · ${esc(relText(r.rel))}\n${ax==="depth"?"Depth":ax} ${fmt(pos(r),1)} mm\n${esc(met.label)} ${fmt(r.v[mk],met.dp)} ${met.unit}${r.included?"":"\nExcluded"}`;
-    s += r.included ? `<circle class="dot ${r.rel}" cx="${cx}" cy="${cy}" r="5" tabindex="0" data-tip="${tip}"/>`
-                    : `<circle class="hollow" cx="${cx}" cy="${cy}" r="4.5" tabindex="0" data-tip="${tip}"/>`;
-  }
-  $("#chPos").innerHTML = s + `</svg>`;
-}
-
-/* --- location map: top, front and side views --- */
-const SEQ_LIGHT = ["#86b6ef","#6da7ec","#5598e7","#3987e5","#2a78d6","#256abf","#1c5cab","#184f95","#104281"];
-const SEQ_DARK  = ["#184f95","#1c5cab","#256abf","#2a78d6","#3987e5","#5598e7","#6da7ec","#86b6ef","#9ec5f4"];
-const hex = h => [1,3,5].map(i=>parseInt(h.slice(i,i+2),16));
-function seqColor(t){
-  const ramp = isDark() ? SEQ_DARK : SEQ_LIGHT; t = Math.max(0,Math.min(1,t));
-  const f = t*(ramp.length-1), i = Math.floor(f), k = f-i;
-  if(i>=ramp.length-1) return ramp[ramp.length-1];
-  const a = hex(ramp[i]), b = hex(ramp[i+1]);
-  return "#"+a.map((v,j)=>Math.round(v+(b[j]-v)*k).toString(16).padStart(2,"0")).join("");
-}
-function renderMap(){
-  const b=state.block, ext=C.blk.ext, box=$("#mapBox");
-  const vals = C.sp.filter(r=>isNum(r.sigma)).map(r=>r.sigma);
-  const vmin = vals.length?Math.min(...vals):null, vmax = vals.length?Math.max(...vals):null;
-  const grad = isDark()?SEQ_DARK:SEQ_LIGHT;
-  $("#mapLegend").innerHTML = (vals.length
-    ? `<span>Tensile stress at tensile strength (MPa) <span style="font-variant-numeric:tabular-nums">${fmt(vmin,1)}</span> <i style="width:90px;background:linear-gradient(90deg,${grad.join(",")})"></i><span style="font-variant-numeric:tabular-nums">${fmt(vmax,1)}</span></span>` : "")
-    + `<span><i style="background:var(--surface);border:1.2px solid var(--ink2)"></i>No result yet</span><span><i style="background:transparent;border:2px solid var(--crit)"></i>Position problem</span>`;
-  if(!AXES.every(a=>isNum(ext[a]) && ext[a]>0)){
-    box.innerHTML = emptyChart(700,160,"Enter the original sample dimensions in Section 2 to draw the location map","Specimen location map"); return;
-  }
-  const cyl = b.shape==="cyl", Lx=ext.X, Ly=ext.Y, Lz=ext.Z;
-  const gap=64, pad=48, maxW=1000;
-  const sc = Math.min((maxW-2*pad-gap)/(Lx+Ly), 640/(Ly+Lz));
-  const Wsvg = 2*pad + gap + (Lx+Ly)*sc, Hsvg = 2*pad + gap + (Ly+Lz)*sc + 10;
-  const off = cyl ? {X:-Lx/2, Y:-Ly/2, Z:0} : {X:0,Y:0,Z:0};
-  const views = [
-    { name:"TOP VIEW (looking down Z)",    h:"X", v:"Y", d:"Z", near:+1, ox:pad,              oy:pad,              w:Lx, ht:Ly },
-    { name:"FRONT VIEW (looking along +Y)",h:"X", v:"Z", d:"Y", near:-1, ox:pad,              oy:pad+Ly*sc+gap,    w:Lx, ht:Lz },
-    { name:"SIDE VIEW (looking along −X)", h:"Y", v:"Z", d:"X", near:+1, ox:pad+Lx*sc+gap,    oy:pad+Ly*sc+gap,    w:Ly, ht:Lz }
-  ];
-  const sd = isNum(state.settings.shoulder) ? state.settings.shoulder : null;
-  let s = svgOpen(Wsvg,Hsvg,"Specimen location map in the original sample");
-  for(const v of views){
-    const X = val => v.ox + (val-off[v.h])*sc;
-    const Y = val => v.oy + v.ht*sc - (val-off[v.v])*sc;
-    s += `<text class="view" x="${v.ox}" y="${v.oy-26}">${v.name}</text>`;
-    if(cyl && v.h==="X" && v.v==="Y") s += `<circle class="blk" cx="${X(0)}" cy="${Y(0)}" r="${Lx/2*sc}"/>`;
-    else s += `<rect class="blk" x="${v.ox}" y="${v.oy}" width="${v.w*sc}" height="${v.ht*sc}"/>`;
-    s += `<text class="tick" x="${v.ox+v.w*sc/2}" y="${v.oy+v.ht*sc+16}" text-anchor="middle">${v.h} → ${fmt(ext[v.h],1)} mm</text>`;
-    s += `<text class="tick" transform="translate(${v.ox-10} ${v.oy+v.ht*sc/2}) rotate(-90)" text-anchor="middle">${v.v} → ${fmt(ext[v.v],1)} mm</text>`;
-    const dx = cyl&&v.h!=="Z" ? X(0) : X(off[v.h]), dy = cyl&&v.v!=="Z" ? Y(0) : Y(off[v.v]);
-    s += `<circle cx="${dx}" cy="${dy}" r="3" fill="var(--ink)"/><text class="tick" x="${dx+5}" y="${dy-5}">0</text>`;
-    const ga = b.grainAxis;
-    if(ga===v.h){
-      const x2 = v.ox + v.w*sc, x1 = x2-34, y = v.oy-9;
-      s += `<line class="arrow" x1="${x1}" y1="${y}" x2="${x2-6}" y2="${y}"/><path class="arrowhead" d="M${x2} ${y}l-7 -4v8z"/><text class="tick" x="${x1-5}" y="${y+3}" text-anchor="end">forming axis</text>`;
-    } else if(ga===v.v){
-      const x = v.ox + v.w*sc + 12, y2 = v.oy, y1 = v.oy+34;
-      s += `<line class="arrow" x1="${x}" y1="${y1}" x2="${x}" y2="${y2+6}"/><path class="arrowhead" d="M${x} ${y2}l-4 7h8z"/><text class="tick" transform="translate(${x+4} ${y1+4}) rotate(90)">forming axis</text>`;
-    } else {
-      s += `<text class="tick" x="${v.ox+v.w*sc}" y="${v.oy-8}" text-anchor="end">forming axis ⊙ normal to view</text>`;
-    }
-    // far specimens first so the nearest one is drawn on top; labels after all shapes
-    const rows = C.sp.filter(r=>isNum(r.s[v.h.toLowerCase()]) && isNum(r.s[v.v.toLowerCase()]));
-    const dk = v.d.toLowerCase();
-    rows.sort((a,c)=>v.near*((a.s[dk]??0)-(c.s[dk]??0)));
-    const labels = new Map();
-    rows.forEach(r=>{
-      const sp=r.s, pos={X:sp.x,Y:sp.y,Z:sp.z};
-      const dia = sd ?? r.dAvg ?? Math.min(Lx,Ly,Lz)*0.06;
-      const len = isNum(sp.ol) ? sp.ol : dia*4;
-      const fill = isNum(r.sigma) ? seqColor(vmax>vmin ? (r.sigma-vmin)/(vmax-vmin) : 0.6) : "var(--surface)";
-      const bad = r.fit==="bad" || r.fitMsg.startsWith("Overlaps");
-      const cls = (isNum(r.sigma) ? "" : "spec-out ") + (bad ? "spec-bad" : "");
-      const tip = `${esc(sp.id)} · axis ${sp.axis} · ${esc(relText(r.rel))}\nCentre X ${fmt(sp.x,1)}, Y ${fmt(sp.y,1)}, Z ${fmt(sp.z,1)} mm\n${isNum(r.sigma)?`Tensile strength ${fmt(r.sigma,2)} MPa`:"No result"}${r.fit!=="ok"?"\n"+esc(r.fitMsg):""}`;
-      const cx=X(pos[v.h]), cy=Y(pos[v.v]);
-      let top;
-      if(sp.axis===v.h || sp.axis===v.v){
-        const along = sp.axis===v.h, w = (along?len:dia)*sc, h=(along?dia:len)*sc;
-        top = cy-h/2;
-        s += `<rect class="${cls}" x="${cx-w/2}" y="${cy-h/2}" width="${w}" height="${h}" rx="${Math.min(w,h)/2}" style="fill:${fill}" tabindex="0" data-tip="${tip}"/>`;
-        if(isNum(sp.gl) && isNum(r.sigma)){
-          const g=sp.gl*sc/2;
-          s += along ? `<line class="gauge" x1="${cx-g}" x2="${cx-g}" y1="${cy-h/2+2}" y2="${cy+h/2-2}"/><line class="gauge" x1="${cx+g}" x2="${cx+g}" y1="${cy-h/2+2}" y2="${cy+h/2-2}"/>`
-                     : `<line class="gauge" y1="${cy-g}" y2="${cy-g}" x1="${cx-w/2+2}" x2="${cx+w/2-2}"/><line class="gauge" y1="${cy+g}" y2="${cy+g}" x1="${cx-w/2+2}" x2="${cx+w/2-2}"/>`;
-        }
-      } else {
-        const rr = dia*sc/2; top = cy-rr;
-        s += `<circle class="${cls}" cx="${cx}" cy="${cy}" r="${rr}" style="fill:${fill}" tabindex="0" data-tip="${tip}"/>`;
-      }
-      const key = `${Math.round(cx)}|${Math.round(top)}`;
-      const L = labels.get(key) || { x:cx, y:top-4, ids:[] }; L.ids.push(sp.id); labels.set(key, L);
-    });
-    // place labels top-down, nudging any that would collide with one already placed
-    const placed = [];
-    for(const L of [...labels.values()].sort((a,c)=>a.y-c.y)){
-      const txt = L.ids.slice().sort((a,c)=>a.localeCompare(c,undefined,{numeric:true})).join(", ");
-      const w = txt.length*6.2, h = 12; let y = L.y;
-      const hits = yy => placed.some(p=>Math.abs(p.x-L.x) < (p.w+w)/2+2 && Math.abs(p.y-yy) < h);
-      for(let k=0; k<6 && hits(y); k++) y -= h+1;
-      placed.push({x:L.x, y, w});
-      s += `<text class="lbl halo" x="${L.x}" y="${y}" text-anchor="middle">${esc(txt)}</text>`;
-    }
-  }
-  box.innerHTML = s + `</svg>`;
 }
 
 /* =====================================================================
@@ -1215,20 +819,19 @@ document.addEventListener("input", e=>{
   let v = el.value;
   if(el.hasAttribute("data-num")) v = parseNum(v);
   setPath(state, p, v);
-  if(el.dataset.rerender==="block") renderBlock();
   refresh(); save();
 });
 document.addEventListener("click", e=>{
   const d = e.target.closest?.("[data-del]"); if(!d) return;
   const i = +d.dataset.del, s = state.specimens[i];
-  const hasData = ["x","y","z","d1","d2",...METRICS.map(m=>m.k)].some(k=>isNum(s[k])) || s.curve?.length;
+  const hasData = ["d1","d2",...METRICS.map(m=>m.k)].some(k=>isNum(s[k]));
   if(hasData && !confirm(`Remove specimen ${s.id} and all of its data?`)) return;
   state.specimens.splice(i,1); renderSpecTables(); refresh(); save();
 });
 function addSpecimens(n){
   for(let k=0;k<n;k++){
     const last = state.specimens[state.specimens.length-1], sp = blankSpecimen(state.specimens.length+1);
-    if(last){ sp.axis = last.axis; sp.gl = last.gl; sp.ol = last.ol; }
+    if(last){ sp.gl = last.gl; sp.ol = last.ol; }
     state.specimens.push(sp);
   }
   renderSpecTables(); refresh(); save();
@@ -1263,46 +866,13 @@ $("#btnResPaste").onclick = ()=>{
   if(filled){ $("#resPaste").value = ""; renderSpecTables(); refresh(); save(); }
 };
 
-/* ---------- curve import ---------- */
-$("#btnCurveImport").onclick = ()=>{
-  const i = +$("#curveSpec").value, s = state.specimens[i], msg = $("#curveMsg");
-  if(!s){ msg.textContent = "Select a specimen."; return; }
-  const su = $("#curveStrainU").value, yt = $("#curveY").value, pts = [];
-  for(const line of $("#curveText").value.split(/\r?\n/)){
-    const raw = line.includes("\t") ? line.split("\t") : line.trim().split(/[;, ]+/);
-    const tok = raw.map(parseNum).filter(isNum);
-    if(tok.length<2) continue;
-    let e = tok[0]; if(su==="pct") e/=100; else if(su==="ue") e/=1e6;
-    pts.push([e, tok[1]]);
-  }
-  if(pts.length<3){ msg.textContent = "Fewer than 3 numeric rows found. Check the separator."; return; }
-  if(yt==="stress"){
-    const r = C.sp[i]; if(!isNum(r.A)){ msg.textContent = "Enter the gauge diameter in Section 4 first so stress can be converted to load."; return; }
-    pts.forEach(p=>p[1]=p[1]*r.A);
-  }
-  if(s.curve?.length && !confirm(`Replace the ${s.curve.length} stored points for ${s.id}?`)) return;
-  s.curve = pts; msg.textContent = `Imported ${pts.length} points into ${s.id}.`;
-  $("#curveText").value = ""; refresh(); save();
-};
-$("#btnCurveShow").onclick = ()=>{
-  const s = state.specimens[+$("#curveSpec").value]; if(!s) return;
-  $("#curveStrainU").value="abs"; $("#curveY").value="load";
-  $("#curveText").value = (s.curve||[]).map(([e,P])=>`${e}\t${P}`).join("\n");
-  $("#curveMsg").textContent = s.curve?.length ? `Showing ${s.curve.length} points for ${s.id} (strain mm/mm, load N).` : `${s.id} has no curve data.`;
-};
-$("#btnCurveClear").onclick = ()=>{
-  const s = state.specimens[+$("#curveSpec").value]; if(!s||!s.curve?.length) return;
-  if(!confirm(`Delete the load–strain record for ${s.id}?`)) return;
-  s.curve=[]; $("#curveMsg").textContent = `Curve for ${s.id} deleted.`; refresh(); save();
-};
-
 /* ---------- file actions ---------- */
 function download(name, text, type){
   const a = document.createElement("a"); a.href = URL.createObjectURL(new Blob([text],{type})); a.download = name;
   document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 const fileBase = () => "C749-" + ((state.meta.reportNo||"report").replace(/[^\w.-]+/g,"_"));
-$("#btnSave").onclick = ()=> download(fileBase()+".json", JSON.stringify({format:"astm-c749-report", version:2, saved:new Date().toISOString(), data:state}, null, 1), "application/json");
+$("#btnSave").onclick = ()=> download(fileBase()+".json", JSON.stringify({format:"astm-c749-report", version:3, saved:new Date().toISOString(), data:state}, null, 1), "application/json");
 $("#btnLoad").onclick = ()=> $("#fileLoad").click();
 $("#fileLoad").onchange = e=>{
   const f = e.target.files[0]; if(!f) return;
@@ -1311,21 +881,17 @@ $("#fileLoad").onchange = e=>{
   rd.readAsText(f);
 };
 $("#btnCsv").onclick = ()=>{
-  const head = ["Specimen ID","Long axis","X (mm)","Y (mm)","Z (mm)","Orientation","Depth below surface (mm)","Position check",
-    "Dia 1 (mm)","Dia 2 (mm)","Mean dia (mm)","Area (mm2)","Reduced-section length (mm)","Overall length (mm)",
-    ...METRICS.flatMap(m=>[metLabel(m)+metUnit(m), metLabel(m)+" source"]),
-    "Load / area (MPa)","Fracture location","Included","Checks","Curve points","Notes"];
+  const head = ["Specimen ID","Dia 1 (mm)","Dia 2 (mm)","Mean dia (mm)","Area (mm2)","Reduced-section length (mm)","Overall length (mm)",
+    ...METRICS.map(m=>m.label+metUnit(m)),
+    "Load / area (MPa)","Fracture location","Included","Checks","Notes"];
   const q = v => { const s = v==null ? "" : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s; };
   const n = (v,dp)=> isNum(v) ? v.toFixed(dp) : "";
-  const rows = C.sp.map(r=>{ const s=r.s; return [s.id,s.axis,s.x,s.y,s.z,relText(r.rel),n(r.depth,2),r.fitMsg,s.d1,s.d2,n(r.dAvg,4),n(r.A,3),s.gl,s.ol,
-    ...METRICS.flatMap(m=>[n(r.v[m.k], m.dp+1), r.src[m.k]==="record"?"from record":r.src[m.k]]),
-    n(r.calcBreak,3),(FRACTURE.find(f=>f[0]===s.frac)||["",""])[1],r.included?"Yes":"No",r.warn.join("; "),s.curve?.length||0,s.notes]; });
+  const rows = C.sp.map(r=>{ const s=r.s; return [s.id,s.d1,s.d2,n(r.dAvg,4),n(r.A,3),s.gl,s.ol,
+    ...METRICS.map(m=>isNum(r.v[m.k]) ? r.v[m.k] : ""),
+    n(r.calcBreak,3),(FRACTURE.find(f=>f[0]===s.frac)||["",""])[1],r.included?"Yes":"No",r.warn.join("; "),s.notes]; });
   download(fileBase()+"-specimens.csv", "﻿"+[head,...rows].map(r=>r.map(q).join(",")).join("\r\n"), "text/csv");
 };
 $("#btnPrint").onclick = ()=> window.print();
-window.addEventListener("beforeprint", ()=>{ window.__forceLight=true; renderMap(); });
-window.addEventListener("afterprint", ()=>{ window.__forceLight=false; renderMap(); });
-matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change", ()=>renderMap());
 
 $("#btnClear").onclick = ()=>{
   if(!confirm("Start a new blank report? Current entries in this browser will be cleared. Save the data first if you need it.")) return;
@@ -1337,19 +903,19 @@ $("#btnExample").onclick = ()=>{
 };
 
 /* =====================================================================
-   EXAMPLE DATA: molded graphite block, 10 specimens.
-   Illustrative values only, generated to demonstrate the template.
+   EXAMPLE DATA: 10 specimens. Illustrative values only, derived from
+   simulated load-strain records so the nine results are consistent.
    ===================================================================== */
 function exampleState(){
   let seed = 749;
   const rnd = () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed>>>15, 1|seed); t = t + Math.imul(t ^ t>>>7, 61|t) ^ t; return ((t ^ t>>>14)>>>0)/4294967296; };
   const nrm = () => { let a=0; for(let i=0;i<6;i++) a+=rnd(); return (a-3)/Math.sqrt(0.5); };
+  const r = (v,dp)=>isNum(v)?+v.toFixed(dp):null;
   const st = blankState();
-  state = st;   // analyseCurve reads the settings from state
   Object.assign(st.meta, {
     labName:"Example Materials Test Laboratory", reportNo:"EX-2026-0101", reportDate:"2026-11-05", revision:"0", status:"Draft",
-    customer:"Example customer", poNo:"WO-0000", grade:"Fine-grain molded graphite (example)", manufacturer:"—", lot:"LOT-EX-01",
-    condition:"Graphitized", specDrawing:"Round reduced-section tensile specimen, Ø12.7 mm gauge", machining:"CNC turned, dry; no coolant",
+    customer:"Example customer", poNo:"WO-0000", grade:"Fine-grain graphite billet (example)", manufacturer:"—", lot:"LOT-EX-01",
+    condition:"Graphitized", specDrawing:"Round reduced-section tensile specimen from 0.500 × 0.500 × 4.750 in blank", machining:"CNC turned, dry; no coolant",
     machine:"Electromechanical universal test machine", machineId:"UTM-01", loadCell:"10 kN", loadCellCal:"2027-03-31",
     extensometer:"Clip-on extensometer, 2 arms", extCal:"2027-01-15",
     loadTrain:"Self-aligning holders with flexible cable couplings", rate:"Crosshead 0.5 mm/min", temp:"22", rh:"45",
@@ -1358,45 +924,30 @@ function exampleState(){
     remarks:"S-09 fractured in the fillet and is excluded from statistics. Fracture surfaces on all other specimens were flat and granular.",
     conclusion:""
   });
-  Object.assign(st.settings, { defGL:25, nomD:12.7, shoulder:25.4 });
-  Object.assign(st.block, { id:"BLK-EX-01", shape:"rect", forming:"molded", grainAxis:"Z",
-    datum:"Origin at the stamped corner. X along length, Y along width, Z along thickness (pressing direction).",
-    L:[330.2,330.5,330.1], W:[230.4,230.1,230.3], T:[180.2,180.5,180.4], mass:24310, instrument:"Steel rule / caliper CAL-03",
-    notes:"No visible cracks or chips. Top face marked with pressing direction." });
-  const layout = [
-    ["S-01","Z", 50, 50, 90], ["S-02","Z",165, 50, 90], ["S-03","Z",280, 50, 90],
-    ["S-04","Z", 50,180, 90], ["S-05","Z",165,180, 90], ["S-06","Z",280,180, 90],
-    ["S-07","X", 85,115, 90], ["S-08","X",245,115, 90], ["S-09","X",165,115, 35], ["S-10","X",165,115,145]
-  ];
-  st.specimens = layout.map(([id,axis,x,y,z],k)=>{
+  Object.assign(st.settings, { defGL:25, nomD:6.35 });
+  st.specimens = Array.from({length:10},(_,k)=>{
     const sp = blankSpecimen(k+1);
-    Object.assign(sp,{ id, axis, x, y, z, gl:50.8, ol:127.0 });
-    sp.d1 = +(12.70 + nrm()*0.012).toFixed(3); sp.d2 = +(12.70 + nrm()*0.012).toFixed(3);
+    Object.assign(sp,{ gl:31.75, ol:120.65 });
+    sp.d1 = +(6.35 + nrm()*0.008).toFixed(3); sp.d2 = +(6.35 + nrm()*0.008).toFixed(3);
     const A = Math.PI*((sp.d1+sp.d2)/2)**2/4;
-    const par = axis==="Z";                          // parallel to pressing axis = against grain
-    const edge = Math.min(x,330-x,y,230-y,z,180-z);  // mild skin effect
-    const sf = (par?18.6:22.1) + (edge<60?0.5:0) + nrm()*0.7;   // MPa
-    const E0 = (par?9800:12400) + nrm()*250;         // initial tangent, MPa
-    const ef = (par?0.0031:0.0027) + nrm()*0.00012;  // mm/mm
-    const c = (E0*ef - sf)/(ef*ef);
-    const step = 0.00002, N = Math.round(ef/step), curve = [];   // fixed sampling, so point count varies
-    for(let i=0;i<=N;i++){
-      const e = ef*i/N; let sg = E0*e - c*e*e;
-      if(i>0) sg *= 1 + nrm()*0.002;
-      curve.push([+e.toFixed(6), +(Math.max(0,sg)*A).toFixed(1)]);
-    }
-    // short drop-off after the peak, then brittle fracture: load collapses
-    const tail = 1 + Math.floor(rnd()*4); let P = curve[curve.length-1][1];
-    for(let j=1;j<=tail;j++){ P *= 1 - (0.002 + rnd()*0.004); curve.push([+(ef+j*step*0.6).toFixed(6), +P.toFixed(1)]); }
-    for(let j=1;j<=3;j++) curve.push([+(ef+(tail+j)*step*0.6).toFixed(6), +(Math.abs(nrm())*4).toFixed(1)]);
-    sp.curve = curve;
-    const cv = analyseCurve(curve, A);
-    const r = (v,dp)=>isNum(v)?+v.toFixed(dp):null;
+    // simulated record: sigma = E0*e - c*e^2 up to the peak, short drop-off, then fracture
+    const sf = 20.3 + nrm()*0.9, E0 = 10900 + nrm()*300, ef = 0.0029 + nrm()*0.00013;
+    const c = (E0*ef - sf)/(ef*ef), step = 0.00002, N = Math.round(ef/step), pts = [];
+    for(let i=0;i<=N;i++){ const e = ef*i/N; let sg = E0*e - c*e*e; if(i>0) sg *= 1 + nrm()*0.002; pts.push([e, Math.max(0,sg)]); }
+    let im = 0; pts.forEach((p,i)=>{ if(p[1]>pts[im][1]) im=i; });
+    const tail = 1 + Math.floor(rnd()*4); let s = pts[pts.length-1][1];
+    for(let j=1;j<=tail;j++){ s *= 1 - (0.002 + rnd()*0.004); pts.push([ef+j*step*0.6, s]); }
+    const ib = pts.length-1;
+    // Young's: least-squares slope 0.01-0.1 %; E-modulus: chord 0.05-0.25 %
+    const fit = pts.filter(p=>p[0]>=0.0001 && p[0]<=0.001), mx=mean(fit.map(p=>p[0])), my=mean(fit.map(p=>p[1]));
+    let sxy=0,sxx=0; fit.forEach(p=>{ sxy+=(p[0]-mx)*(p[1]-my); sxx+=(p[0]-mx)**2; });
+    const at = e => { for(let i=1;i<pts.length;i++) if(pts[i][0]>=e){ const [e0,s0]=pts[i-1],[e1,s1]=pts[i]; return s0+(e-e0)*(s1-s0)/(e1-e0); } return null; };
     Object.assign(sp, {
-      loadBreak:r(cv.loadBreak,1), dpBreak:cv.dpBreak, stressBreak:r(cv.stressBreak,2), strainBreak:r(cv.strainBreak,5),
-      strainGL:25, strainTS:r(cv.strainTS,5), stressTS:r(cv.stressTS,2), modYoung:r(cv.modYoung,0), modE:r(cv.modE,0)
+      loadBreak:r(pts[ib][1]*A,1), dpBreak:ib+1, stressBreak:r(pts[ib][1],2), strainBreak:r(pts[ib][0],5),
+      strainGL:25, strainTS:r(pts[im][0],5), stressTS:r(pts[im][1],2),
+      modYoung:r(sxy/sxx,0), modE:r((at(0.0025)-at(0.0005))/0.002,0)
     });
-    if(id==="S-09"){ sp.frac="fillet"; sp.notes="Broke at fillet radius"; }
+    if(k===8){ sp.frac="fillet"; sp.notes="Broke at fillet radius"; }
     return sp;
   });
   return st;
