@@ -166,13 +166,19 @@ svg .bf-billet-top{fill:var(--wash);stroke:var(--ink2);stroke-width:1.5}
 svg .bf-hidden{fill:none;stroke:var(--ink2);stroke-width:1;stroke-dasharray:5 4}
 svg .bf-plane{fill:none;stroke:var(--s2);stroke-width:1;stroke-dasharray:4 4;opacity:.75}
 svg .bf-center{stroke:var(--muted);stroke-width:1;stroke-dasharray:14 4 3 4}
-svg .bf-bar-l,svg .bf-bar-end{fill:var(--s2)}
-svg .bf-bar-r{fill:color-mix(in srgb,var(--s2) 72%,#000)}
-svg .bf-bar-t{fill:color-mix(in srgb,var(--s2) 60%,#fff)}
+svg .bf-rod{fill:url(#rodg);stroke:color-mix(in srgb,var(--s2) 65%,#000);stroke-width:1}
+svg .bf-g0{stop-color:color-mix(in srgb,var(--s2) 55%,#fff)}
+svg .bf-g1{stop-color:var(--s2)}
+svg .bf-g2{stop-color:color-mix(in srgb,var(--s2) 62%,#000)}
+svg .bf-hatch{fill:url(#hatch)}
+svg .bf-hatchln{stroke:var(--ink2);stroke-width:1;opacity:.28}
+svg .bf-halo{paint-order:stroke;stroke:var(--wash);stroke-width:4px;stroke-linejoin:round}
+svg .bf-arrow2{stroke:var(--ink2);stroke-width:1.5}
 svg .bf-ext{stroke:var(--ink2);stroke-width:.8}
 svg .bf-dim,svg .bf-leader{stroke:var(--ink);stroke-width:1}
 svg .bf-arrowhead,svg .bf-dot{fill:var(--ink)}
 svg .bf-dimtxt{fill:var(--ink);font-size:14px;font-weight:600}
+svg .bf-dimtxt.sm{font-size:12.5px}
 svg .bf-dimsub{fill:var(--ink2);font-size:12px}
 svg .bf-note{fill:var(--ink2);font-size:12.5px}
 svg .bf-title{fill:var(--ink);font-size:12px;font-weight:650;letter-spacing:.04em}
@@ -294,79 +300,92 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
 
 <!-- ================= SAMPLE LOCATION ================= -->
 <section class="sheet" id="sec-loc">
-  <h2><span class="num">2</span> Sample location in billet</h2>
-  <p class="hint">A 0.500 in × 0.500 in × 4.750 in sample blank was removed from the very centre of the cylindrical billet. It lies on the billet axis and is centred along the billet length.</p>
+  <h2><span class="num">2</span> Specimen location in billet</h2>
+  <p class="hint">Test specimens are machined from an extruded graphite billet, Ø7.750 in × 1.000 in thick. Each specimen is 4.750 in long, with 0.500 in diameter ends and a 0.250 in diameter centre section. It lies on a diameter through the centre of the billet at mid-thickness, perpendicular to the extrusion axis, with 1.500 in of billet left at each end. Views are drawn to scale.</p>
   <figure class="billet-fig">
-    <svg viewBox="0 0 780 430" role="img" aria-labelledby="billetTitle billetDesc">
-      <title id="billetTitle">Cylinder billet with centre sample location</title>
-      <desc id="billetDesc">Pictorial view of a cylindrical billet with a 0.500 by 0.500 by 4.750 inch sample blank on the billet axis at mid-length, and an end view showing the square sample centred on the billet axis.</desc>
+    <svg viewBox="0 0 1010 730" role="img" aria-labelledby="billetTitle billetDesc">
+      <title id="billetTitle">Specimen location in the extruded billet</title>
+      <desc id="billetDesc">Plan view and section A–A of a 7.750 inch diameter by 1.000 inch thick extruded billet, showing a 4.750 inch long round tensile specimen centred on a diameter at mid-thickness with 1.500 inches of billet at each end, and a detail of the specimen with 0.500 inch diameter ends and a 0.250 inch diameter centre section.</desc>
       <defs>
         <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 1L10 5L0 9z" class="bf-arrowhead"/></marker>
+        <linearGradient id="rodg" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" class="bf-g0"/><stop offset="0.35" class="bf-g1"/><stop offset="1" class="bf-g2"/>
+        </linearGradient>
+        <pattern id="hatch" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)"><line x1="0" y1="0" x2="0" y2="7" class="bf-hatchln"/></pattern>
       </defs>
-
-      <!-- ===== Pictorial view ===== -->
-      <text class="bf-title" x="40" y="24">PICTORIAL VIEW</text>
-      <!-- billet body -->
-      <path class="bf-billet" d="M90 80 V350 A120 30 0 0 0 330 350 V80 A120 30 0 0 1 90 80 Z"/>
-      <path class="bf-hidden" d="M90 350 A120 30 0 0 1 330 350"/>
-      <ellipse class="bf-billet-top" cx="210" cy="80" rx="120" ry="30"/>
-      <!-- cut planes at the ends of the sample -->
-      <ellipse class="bf-plane" cx="210" cy="135" rx="120" ry="30"/>
-      <ellipse class="bf-plane" cx="210" cy="295" rx="120" ry="30"/>
-      <!-- centre line (billet axis) -->
-      <line class="bf-center" x1="210" y1="34" x2="210" y2="396"/>
-      <text class="bf-note" x="216" y="44">Billet axis</text>
-      <!-- sample blank: square prism on the axis, faces shaded for depth -->
-      <path class="bf-bar-l" d="M189 135 L210 140.3 L210 300.3 L189 295 Z"/>
-      <path class="bf-bar-r" d="M210 140.3 L231 135 L231 295 L210 300.3 Z"/>
-      <path class="bf-bar-t" d="M210 129.7 L231 135 L210 140.3 L189 135 Z"/>
-      <!-- length dimension -->
-      <line class="bf-ext" x1="236" y1="135" x2="384" y2="135"/>
-      <line class="bf-ext" x1="236" y1="295" x2="384" y2="295"/>
-      <line class="bf-dim" x1="376" y1="137" x2="376" y2="293" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt" x="384" y="208">4.750 in</text>
-      <text class="bf-dimsub" x="384" y="225">(120.65 mm)</text>
-      <!-- equal spacing to billet ends: centred along the length -->
-      <line class="bf-dim" x1="62" y1="82" x2="62" y2="133" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <line class="bf-dim" x1="62" y1="297" x2="62" y2="348" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <line class="bf-ext" x1="56" y1="80" x2="92" y2="80"/>
-      <line class="bf-ext" x1="56" y1="135" x2="186" y2="135"/>
-      <line class="bf-ext" x1="56" y1="295" x2="186" y2="295"/>
-      <line class="bf-ext" x1="56" y1="350" x2="92" y2="350"/>
-      <text class="bf-dimtxt" x="50" y="112" text-anchor="end">=</text>
-      <text class="bf-dimtxt" x="50" y="327" text-anchor="end">=</text>
-      <!-- leader to the sample -->
-      <polyline class="bf-leader" fill="none" points="224,175 300,104 346,104"/>
-      <circle cx="224" cy="175" r="2.5" class="bf-dot"/>
-      <text class="bf-note" x="350" y="100">Sample blank</text>
-      <text class="bf-dimsub" x="350" y="116">0.500 × 0.500 in</text>
-      <text class="bf-caption" x="210" y="412" text-anchor="middle">Cylinder billet (not to scale)</text>
-
-      <!-- ===== End view ===== -->
-      <text class="bf-title" x="500" y="24">END VIEW (looking along billet axis)</text>
-      <circle class="bf-billet" cx="610" cy="215" r="135"/>
-      <line class="bf-center" x1="460" y1="215" x2="760" y2="215"/>
-      <line class="bf-center" x1="610" y1="66" x2="610" y2="364"/>
-      <rect class="bf-bar-end" x="592" y="197" width="36" height="36"/>
-      <!-- 0.500 width -->
-      <line class="bf-ext" x1="592" y1="193" x2="592" y2="150"/>
-      <line class="bf-ext" x1="628" y1="193" x2="628" y2="150"/>
-      <line class="bf-dim" x1="552" y1="158" x2="590" y2="158" marker-end="url(#arw)"/>
-      <line class="bf-dim" x1="668" y1="158" x2="630" y2="158" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt" x="610" y="146" text-anchor="middle">0.500 in <tspan class="bf-dimsub">(12.70 mm)</tspan></text>
-      <!-- 0.500 height -->
-      <line class="bf-ext" x1="632" y1="197" x2="690" y2="197"/>
-      <line class="bf-ext" x1="632" y1="233" x2="690" y2="233"/>
-      <line class="bf-dim" x1="682" y1="160" x2="682" y2="195" marker-end="url(#arw)"/>
-      <line class="bf-dim" x1="682" y1="270" x2="682" y2="235" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt" x="690" y="258">0.500 in</text>
-      <text class="bf-dimsub" x="690" y="275">(12.70 mm)</text>
-      <text class="bf-note" x="610" y="388" text-anchor="middle">Sample centred on billet axis</text>
-      <text class="bf-caption" x="610" y="410" text-anchor="middle">Billet diameter not to scale</text>
+      <!-- ===== Plan view (to scale) ===== -->
+      <text class="bf-title" x="50" y="30">PLAN VIEW <tspan class="bf-dimsub">looking along the extrusion axis</tspan></text>
+      <circle class="bf-billet" cx="230" cy="250" r="180.0"/>
+      <line class="bf-center" x1="28.0" y1="250" x2="432.0" y2="250"/>
+      <line class="bf-center" x1="230" y1="56.0" x2="230" y2="444.0"/>
+      <path class="bf-rod" d="M119.7 238.4H183.5C196.3 238.4 194.0 244.2 206.8 244.2H253.2C266.0 244.2 263.7 238.4 276.5 238.4H340.3V261.6H276.5C263.7 261.6 266.0 255.8 253.2 255.8H206.8C194.0 255.8 196.3 261.6 183.5 261.6H119.7Z"/>
+      <line class="bf-dim" x1="20.0" y1="250" x2="20.0" y2="266" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt" x="20.0" y="242" text-anchor="middle">A</text>
+      <line class="bf-dim" x1="440.0" y1="250" x2="440.0" y2="266" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt" x="440.0" y="242" text-anchor="middle">A</text>
+      <line class="bf-ext" x1="119.7" y1="236" x2="119.7" y2="192"/>
+      <line class="bf-ext" x1="340.3" y1="236" x2="340.3" y2="192"/>
+      <line class="bf-dim" x1="52.0" y1="198" x2="117.7" y2="198" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt sm" x="84.8" y="191" text-anchor="middle">1.500</text>
+      <line class="bf-dim" x1="121.7" y1="198" x2="338.3" y2="198" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt sm" x="230.0" y="191" text-anchor="middle">4.750</text>
+      <line class="bf-dim" x1="342.3" y1="198" x2="408.0" y2="198" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt sm" x="375.2" y="191" text-anchor="middle">1.500</text>
+      <line class="bf-ext" x1="50.0" y1="254" x2="50.0" y2="470.0"/>
+      <line class="bf-ext" x1="410.0" y1="254" x2="410.0" y2="470.0"/>
+      <line class="bf-dim" x1="52.0" y1="464.0" x2="408.0" y2="464.0" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt" x="230" y="457.0" text-anchor="middle">Ø7.750 in <tspan class="bf-dimsub">(196.85 mm) billet</tspan></text>
+      <text class="bf-note bf-halo" x="230" y="298.0" text-anchor="middle">Specimen centred on a diameter</text>
+      <!-- ===== Edge view, section A-A (to scale) ===== -->
+      <text class="bf-title" x="560" y="30">SECTION A–A <tspan class="bf-dimsub">edge view through the specimen axis</tspan></text>
+      <rect class="bf-billet" x="560" y="126.8" width="360.0" height="46.5"/>
+      <rect class="bf-hatch" x="560" y="126.8" width="360.0" height="46.5"/>
+      <line class="bf-center" x1="546" y1="150" x2="934.0" y2="150"/>
+      <path class="bf-rod" d="M629.7 138.4H693.5C706.3 138.4 704.0 144.2 716.8 144.2H763.2C776.0 144.2 773.7 138.4 786.5 138.4H850.3V161.6H786.5C773.7 161.6 776.0 155.8 763.2 155.8H716.8C704.0 155.8 706.3 161.6 693.5 161.6H629.7Z"/>
+      <line class="bf-ext" x1="560.0" y1="123.8" x2="560.0" y2="94.8"/>
+      <line class="bf-ext" x1="629.7" y1="136.0" x2="629.7" y2="94.8"/>
+      <line class="bf-ext" x1="850.3" y1="136.0" x2="850.3" y2="94.8"/>
+      <line class="bf-ext" x1="920.0" y1="123.8" x2="920.0" y2="94.8"/>
+      <line class="bf-dim" x1="562.0" y1="100.8" x2="627.7" y2="100.8" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt sm" x="594.8" y="93.8" text-anchor="middle">1.500</text>
+      <line class="bf-dim" x1="631.7" y1="100.8" x2="848.3" y2="100.8" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt sm" x="740.0" y="93.8" text-anchor="middle">4.750</text>
+      <line class="bf-dim" x1="852.3" y1="100.8" x2="918.0" y2="100.8" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt sm" x="885.2" y="93.8" text-anchor="middle">1.500</text>
+      <line class="bf-ext" x1="560.0" y1="176.2" x2="560.0" y2="209.2"/>
+      <line class="bf-ext" x1="920.0" y1="176.2" x2="920.0" y2="209.2"/>
+      <line class="bf-dim" x1="562" y1="203.2" x2="918.0" y2="203.2" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt sm" x="740.0" y="196.2" text-anchor="middle">7.750</text>
+      <line class="bf-ext" x1="923.0" y1="126.8" x2="956.0" y2="126.8"/>
+      <line class="bf-ext" x1="923.0" y1="173.2" x2="956.0" y2="173.2"/>
+      <line class="bf-dim" x1="950.0" y1="96.8" x2="950.0" y2="125.8" marker-end="url(#arw)"/>
+      <line class="bf-dim" x1="950.0" y1="203.2" x2="950.0" y2="174.2" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt sm" x="957.0" y="154.0">1.000</text>
+      <text class="bf-note" x="740.0" y="227.2" text-anchor="middle">Specimen at mid-thickness, ⊥ extrusion axis (against grain)</text>
+      <line class="bf-arrow2" x1="530" y1="199.2" x2="530" y2="100.8" marker-end="url(#arw)"/>
+      <text class="bf-dimsub" transform="translate(522 150.0) rotate(-90)" text-anchor="middle">Extrusion axis</text>
+      <text class="bf-dimsub" x="740.0" y="245.2" text-anchor="middle">Dimensions in inches. Billet Ø7.750 × 1.000 in (196.85 × 25.40 mm).</text>
+      <!-- ===== Specimen detail ===== -->
+      <text class="bf-title" x="50" y="518">TEST SPECIMEN <tspan class="bf-dimsub">round tensile specimen, ASTM C749 type: 0.500 in ends, 0.250 in centre section</tspan></text>
+      <line class="bf-center" x1="169.5" y1="610" x2="870.5" y2="610"/>
+      <path class="bf-rod" d="M187.5 575.0H380.0C418.5 575.0 411.5 592.5 450.0 592.5H590.0C628.5 592.5 621.5 575.0 660.0 575.0H852.5V645.0H660.0C621.5 645.0 628.5 627.5 590.0 627.5H450.0C411.5 627.5 418.5 645.0 380.0 645.0H187.5Z"/>
+      <line class="bf-ext" x1="187.5" y1="648.0" x2="187.5" y2="687.0"/>
+      <line class="bf-ext" x1="852.5" y1="648.0" x2="852.5" y2="687.0"/>
+      <line class="bf-dim" x1="189.5" y1="681.0" x2="850.5" y2="681.0" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt" x="520.0" y="674.0" text-anchor="middle">4.750 in <tspan class="bf-dimsub">(120.65 mm)</tspan></text>
+      <line class="bf-ext" x1="184.5" y1="575.0" x2="155.5" y2="575.0"/>
+      <line class="bf-ext" x1="184.5" y1="645.0" x2="155.5" y2="645.0"/>
+      <line class="bf-dim" x1="161.5" y1="577.0" x2="161.5" y2="643.0" marker-start="url(#arw)" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt" x="151.5" y="606.0" text-anchor="end">Ø0.500 in</text>
+      <text class="bf-dimsub" x="151.5" y="623.0" text-anchor="end">(12.70 mm)</text>
+      <line class="bf-dim" x1="520.0" y1="558.5" x2="520.0" y2="591.5" marker-end="url(#arw)"/>
+      <line class="bf-dim" x1="520.0" y1="645.5" x2="520.0" y2="628.5" marker-end="url(#arw)"/>
+      <text class="bf-dimtxt" x="528.0" y="568.5">Ø0.250 in <tspan class="bf-dimsub">(6.35 mm) centre section</tspan></text>
+      <text class="bf-caption" x="520.0" y="709.0" text-anchor="middle">Reduced-section length and fillet radii per the ASTM C749 specimen drawing (shown for illustration, not dimensioned).</text>
     </svg>
     <figcaption class="legend" style="margin-top:6px">
-      <span><i style="background:var(--s2)"></i>Sample blank, 0.500 × 0.500 × 4.750 in (12.70 × 12.70 × 120.65 mm), long axis parallel to billet axis</span>
-      <span><i style="background:var(--wash);border:1px solid var(--ink2)"></i>Billet</span>
+      <span><i style="background:var(--s2)"></i>Test specimen: 4.750 in long, Ø0.500 in ends, Ø0.250 in centre section</span>
+      <span><i style="background:var(--wash);border:1px solid var(--ink2)"></i>Extruded billet, Ø7.750 × 1.000 in</span>
     </figcaption>
   </figure>
 </section>
@@ -914,8 +933,8 @@ function exampleState(){
   const st = blankState();
   Object.assign(st.meta, {
     labName:"Example Materials Test Laboratory", reportNo:"EX-2026-0101", reportDate:"2026-11-05", revision:"0", status:"Draft",
-    customer:"Example customer", poNo:"WO-0000", grade:"Fine-grain graphite billet (example)", manufacturer:"—", lot:"LOT-EX-01",
-    condition:"Graphitized", specDrawing:"Round reduced-section tensile specimen from 0.500 × 0.500 × 4.750 in blank", machining:"CNC turned, dry; no coolant",
+    customer:"Example customer", poNo:"WO-0000", grade:"Extruded graphite billet, Ø7.750 × 1.000 in (example)", manufacturer:"—", lot:"LOT-EX-01",
+    condition:"Graphitized", specDrawing:"Round specimen, 4.750 in long, Ø0.500 in ends, Ø0.250 in centre section", machining:"CNC turned, dry; no coolant",
     machine:"Electromechanical universal test machine", machineId:"UTM-01", loadCell:"10 kN", loadCellCal:"2027-03-31",
     extensometer:"Clip-on extensometer, 2 arms", extCal:"2027-01-15",
     loadTrain:"Self-aligning holders with flexible cable couplings", rate:"Crosshead 0.5 mm/min", temp:"22", rh:"45",
