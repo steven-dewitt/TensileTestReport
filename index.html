@@ -77,6 +77,7 @@ textarea{resize:vertical;min-height:58px}
 input:focus,select:focus,textarea:focus{outline:2px solid var(--field-focus);outline-offset:-1px;border-color:transparent}
 input.bad{border-color:var(--crit);background:color-mix(in srgb,var(--crit) 8%,var(--field))}
 input.n{text-align:right;font-variant-numeric:tabular-nums}
+.field>input.n{text-align:left}
 
 /* ---------- Tables ---------- */
 .tbl-wrap{overflow-x:auto;margin:0 -4px;padding:0 4px}
@@ -288,7 +289,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
     <label class="field"><span>Machine asset / ID no.</span><input data-bind="meta.machineId"></label>
     <label class="field"><span>Load cell capacity</span><input data-bind="meta.loadCell"></label>
     <label class="field"><span>Loading rate<span class="no-print"> (crosshead speed or stress rate, with units)</span></span><input data-bind="meta.rate"></label>
-    <label class="field"><span>Test temperature (<span data-u="temp"></span>)</span><input class="n" data-bind="meta.temp" data-num data-kind="temp" inputmode="decimal"></label>
+    <label class="field"><span>Test temperature (<span data-u="temp"></span>)</span><input data-bind="meta.temp" data-num data-kind="temp" inputmode="decimal"></label>
     <label class="field"><span>Relative humidity (%)</span><input data-bind="meta.rh"></label>
     <label class="field"><span>Test date(s)</span><input data-bind="meta.testDate"></label>
     <label class="field"><span>Operator</span><input data-bind="meta.operator"></label>
