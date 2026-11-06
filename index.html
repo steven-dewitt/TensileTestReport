@@ -241,7 +241,12 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
 
 <!-- ================= TOOLBAR ================= -->
 <div class="toolbar no-print" role="toolbar" aria-label="Report tools">
-  <span class="sub">Units: mm · N · MPa · strain in mm/mm</span>
+  <label class="inline">Units
+    <select id="units" aria-label="Unit system">
+      <option value="metric">Metric (mm, N, MPa)</option>
+      <option value="us">Standard (in, lbf, psi)</option>
+    </select>
+  </label>
   <span class="grow"></span>
   <button id="btnExample" title="Replace the form contents with example graphite test data">Load example data</button>
   <button id="btnClear" class="danger" title="Clear all entries">New blank report</button>
@@ -282,7 +287,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
     <label class="field"><span>Machine asset / ID no.</span><input data-bind="meta.machineId"></label>
     <label class="field"><span>Load cell capacity</span><input data-bind="meta.loadCell"></label>
     <label class="field"><span>Loading rate (crosshead speed or stress rate, with units)</span><input data-bind="meta.rate"></label>
-    <label class="field"><span>Test temperature (°C)</span><input data-bind="meta.temp"></label>
+    <label class="field"><span>Test temperature (<span data-u="temp"></span>)</span><input class="n" data-bind="meta.temp" data-num data-kind="temp" inputmode="decimal"></label>
     <label class="field"><span>Relative humidity (%)</span><input data-bind="meta.rh"></label>
     <label class="field"><span>Test date(s)</span><input data-bind="meta.testDate"></label>
     <label class="field"><span>Operator</span><input data-bind="meta.operator"></label>
@@ -292,7 +297,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
 <!-- ================= SAMPLE LOCATION ================= -->
 <section class="sheet" id="sec-loc">
   <h2><span class="num">2</span> Specimen location in billet</h2>
-  <p class="hint">Test specimens are machined from an extruded graphite billet, Ø7.750 in × 1.000 in thick. Each specimen is 4.750 in long, with 0.500 in diameter ends and a 0.250 in diameter centre section. It lies on a diameter through the centre of the billet at mid-thickness, perpendicular to the extrusion axis, with 1.500 in of billet left at each end. Views are drawn to scale.</p>
+  <p class="hint" id="locHint"></p>
   <figure class="billet-fig">
     <svg viewBox="0 0 1010 730" role="img" aria-labelledby="billetTitle billetDesc">
       <title id="billetTitle">Specimen location in the extruded billet</title>
@@ -317,15 +322,15 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
       <line class="bf-ext" x1="119.7" y1="236" x2="119.7" y2="192"/>
       <line class="bf-ext" x1="340.3" y1="236" x2="340.3" y2="192"/>
       <line class="bf-dim" x1="52.0" y1="198" x2="117.7" y2="198" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt sm" x="84.8" y="191" text-anchor="middle">1.500</text>
+      <text class="bf-dimtxt sm" data-in="1.500" x="84.8" y="191" text-anchor="middle">1.500</text>
       <line class="bf-dim" x1="121.7" y1="198" x2="338.3" y2="198" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt sm" x="230.0" y="191" text-anchor="middle">4.750</text>
+      <text class="bf-dimtxt sm" data-in="4.750" x="230.0" y="191" text-anchor="middle">4.750</text>
       <line class="bf-dim" x1="342.3" y1="198" x2="408.0" y2="198" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt sm" x="375.2" y="191" text-anchor="middle">1.500</text>
+      <text class="bf-dimtxt sm" data-in="1.500" x="375.2" y="191" text-anchor="middle">1.500</text>
       <line class="bf-ext" x1="50.0" y1="254" x2="50.0" y2="470.0"/>
       <line class="bf-ext" x1="410.0" y1="254" x2="410.0" y2="470.0"/>
       <line class="bf-dim" x1="52.0" y1="464.0" x2="408.0" y2="464.0" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt" x="230" y="457.0" text-anchor="middle">Ø7.750 in <tspan class="bf-dimsub">(196.85 mm) billet</tspan></text>
+      <text class="bf-dimtxt" x="230" y="457.0" text-anchor="middle" id="dimBillet"></text>
       <text class="bf-note bf-halo" x="230" y="298.0" text-anchor="middle">Specimen centred on a diameter</text>
       <!-- ===== Edge view, section A-A (to scale) ===== -->
       <text class="bf-title" x="560" y="30">SECTION A–A <tspan class="bf-dimsub">edge view through the specimen axis</tspan></text>
@@ -338,45 +343,45 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
       <line class="bf-ext" x1="850.3" y1="136.0" x2="850.3" y2="94.8"/>
       <line class="bf-ext" x1="920.0" y1="123.8" x2="920.0" y2="94.8"/>
       <line class="bf-dim" x1="562.0" y1="100.8" x2="627.7" y2="100.8" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt sm" x="594.8" y="93.8" text-anchor="middle">1.500</text>
+      <text class="bf-dimtxt sm" data-in="1.500" x="594.8" y="93.8" text-anchor="middle">1.500</text>
       <line class="bf-dim" x1="631.7" y1="100.8" x2="848.3" y2="100.8" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt sm" x="740.0" y="93.8" text-anchor="middle">4.750</text>
+      <text class="bf-dimtxt sm" data-in="4.750" x="740.0" y="93.8" text-anchor="middle">4.750</text>
       <line class="bf-dim" x1="852.3" y1="100.8" x2="918.0" y2="100.8" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt sm" x="885.2" y="93.8" text-anchor="middle">1.500</text>
+      <text class="bf-dimtxt sm" data-in="1.500" x="885.2" y="93.8" text-anchor="middle">1.500</text>
       <line class="bf-ext" x1="560.0" y1="176.2" x2="560.0" y2="209.2"/>
       <line class="bf-ext" x1="920.0" y1="176.2" x2="920.0" y2="209.2"/>
       <line class="bf-dim" x1="562" y1="203.2" x2="918.0" y2="203.2" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt sm" x="740.0" y="196.2" text-anchor="middle">7.750</text>
+      <text class="bf-dimtxt sm" data-in="7.750" x="740.0" y="196.2" text-anchor="middle">7.750</text>
       <line class="bf-ext" x1="923.0" y1="126.8" x2="956.0" y2="126.8"/>
       <line class="bf-ext" x1="923.0" y1="173.2" x2="956.0" y2="173.2"/>
       <line class="bf-dim" x1="950.0" y1="96.8" x2="950.0" y2="125.8" marker-end="url(#arw)"/>
       <line class="bf-dim" x1="950.0" y1="203.2" x2="950.0" y2="174.2" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt sm" x="957.0" y="154.0">1.000</text>
+      <text class="bf-dimtxt sm" data-in="1.000" x="957.0" y="154.0">1.000</text>
       <text class="bf-note" x="740.0" y="227.2" text-anchor="middle">Specimen at mid-thickness, ⊥ extrusion axis (against grain)</text>
       <line class="bf-arrow2" x1="530" y1="199.2" x2="530" y2="100.8" marker-end="url(#arw)"/>
       <text class="bf-dimsub" transform="translate(522 150.0) rotate(-90)" text-anchor="middle">Extrusion axis</text>
-      <text class="bf-dimsub" x="740.0" y="245.2" text-anchor="middle">Dimensions in inches. Billet Ø7.750 × 1.000 in (196.85 × 25.40 mm).</text>
+      <text class="bf-dimsub" x="740.0" y="245.2" text-anchor="middle" id="dimNote"></text>
       <!-- ===== Specimen detail ===== -->
-      <text class="bf-title" x="50" y="518">TEST SPECIMEN <tspan class="bf-dimsub">round tensile specimen, ASTM C749 type: 0.500 in ends, 0.250 in centre section</tspan></text>
+      <text class="bf-title" x="50" y="518">TEST SPECIMEN <tspan class="bf-dimsub" id="specTitle"></tspan></text>
       <line class="bf-center" x1="169.5" y1="610" x2="870.5" y2="610"/>
       <path class="bf-rod" d="M187.5 575.0H380.0C418.5 575.0 411.5 592.5 450.0 592.5H590.0C628.5 592.5 621.5 575.0 660.0 575.0H852.5V645.0H660.0C621.5 645.0 628.5 627.5 590.0 627.5H450.0C411.5 627.5 418.5 645.0 380.0 645.0H187.5Z"/>
       <line class="bf-ext" x1="187.5" y1="648.0" x2="187.5" y2="687.0"/>
       <line class="bf-ext" x1="852.5" y1="648.0" x2="852.5" y2="687.0"/>
       <line class="bf-dim" x1="189.5" y1="681.0" x2="850.5" y2="681.0" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt" x="520.0" y="674.0" text-anchor="middle">4.750 in <tspan class="bf-dimsub">(120.65 mm)</tspan></text>
+      <text class="bf-dimtxt" x="520.0" y="674.0" text-anchor="middle" id="dimLen"></text>
       <line class="bf-ext" x1="184.5" y1="575.0" x2="155.5" y2="575.0"/>
       <line class="bf-ext" x1="184.5" y1="645.0" x2="155.5" y2="645.0"/>
       <line class="bf-dim" x1="161.5" y1="577.0" x2="161.5" y2="643.0" marker-start="url(#arw)" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt" x="151.5" y="606.0" text-anchor="end">Ø0.500 in</text>
-      <text class="bf-dimsub" x="151.5" y="623.0" text-anchor="end">(12.70 mm)</text>
+      <text class="bf-dimtxt" x="151.5" y="606.0" text-anchor="end" id="dimEnd1"></text>
+      <text class="bf-dimsub" x="151.5" y="623.0" text-anchor="end" id="dimEnd2"></text>
       <line class="bf-dim" x1="520.0" y1="558.5" x2="520.0" y2="591.5" marker-end="url(#arw)"/>
       <line class="bf-dim" x1="520.0" y1="645.5" x2="520.0" y2="628.5" marker-end="url(#arw)"/>
-      <text class="bf-dimtxt" x="528.0" y="568.5">Ø0.250 in <tspan class="bf-dimsub">(6.35 mm) centre section</tspan></text>
+      <text class="bf-dimtxt" x="528.0" y="568.5" id="dimCentre"></text>
       <text class="bf-caption" x="520.0" y="709.0" text-anchor="middle">Reduced-section length and fillet radii per the ASTM C749 specimen drawing (shown for illustration, not dimensioned).</text>
     </svg>
     <figcaption class="legend" style="margin-top:6px">
-      <span><i style="background:var(--s2)"></i>Test specimen: 4.750 in long, Ø0.500 in ends, Ø0.250 in centre section</span>
-      <span><i style="background:var(--wash);border:1px solid var(--ink2)"></i>Extruded billet, Ø7.750 × 1.000 in</span>
+      <span><i style="background:var(--s2)"></i><span id="capSpec"></span></span>
+      <span><i style="background:var(--wash);border:1px solid var(--ink2)"></i><span id="capBillet"></span></span>
     </figcaption>
   </figure>
 </section>
@@ -386,7 +391,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
   <h2><span class="num">3</span> Specimen dimensions</h2>
   <p class="hint">Measure the gauge-section diameter twice at the minimum section, 90° apart. The cross-sectional area comes from the mean diameter and is used to check the reported stress at break.</p>
   <div class="grid" style="margin-bottom:10px">
-    <label class="field"><span>Nominal gauge diameter (mm)</span><input class="n" data-bind="settings.nomD" data-num inputmode="decimal"></label>
+    <label class="field"><span>Nominal gauge diameter (<span data-u="len"></span>)</span><input class="n" data-bind="settings.nomD" data-num data-kind="len" inputmode="decimal"></label>
     <label class="field"><span>Measuring instrument / ID</span><input data-bind="meta.dimInstrument"></label>
   </div>
   <div class="tbl-wrap"><table id="dimTable" class="tbl-data"></table></div>
@@ -399,15 +404,15 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
 <!-- ================= TEST RESULTS ================= -->
 <section class="sheet pb" id="sec-res">
   <h2><span class="num">4</span> Test results by specimen</h2>
-  <p class="hint">Enter the values reported by the test software for each specimen. If strain gauge length is left blank, the default below is used.</p>
+  <p class="hint">Enter the values reported by the test software for each specimen, in the units selected at the top of the page. If strain gauge length is left blank, the default below is used.</p>
   <div class="grid" style="margin-bottom:10px">
-    <label class="field"><span>Strain gauge length, default for all specimens (mm)</span><input class="n" data-bind="settings.defGL" data-num inputmode="decimal"></label>
+    <label class="field"><span>Strain gauge length, default for all specimens (<span data-u="len"></span>)</span><input class="n" data-bind="settings.defGL" data-num data-kind="len" inputmode="decimal"></label>
   </div>
   <div class="tbl-wrap"><table id="resTable" class="tbl-data tbl-res"></table></div>
 
   <details class="no-print paste">
     <summary>Paste a results table from the test software</summary>
-    <p class="hint" style="margin-top:8px">One row per specimen, with columns in this order: <span id="pasteOrder"></span>. An optional first column holding the specimen ID matches rows by ID, adding a specimen if the ID is new. Without an ID column, rows fill specimens in order from the first. Header and unit rows are skipped. Tab-separated text, as copied from a spreadsheet, works best.</p>
+    <p class="hint" style="margin-top:8px">One row per specimen, with columns in this order: <span id="pasteOrder"></span>. An optional first column holding the specimen ID matches rows by ID, adding a specimen if the ID is new. Without an ID column, rows fill specimens in order from the first. Values are read in the units currently selected. Header and unit rows are skipped. Tab-separated text, as copied from a spreadsheet, works best.</p>
     <textarea id="resPaste" rows="5"></textarea>
     <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center">
       <button id="btnResPaste" class="primary">Fill table from pasted rows</button>
@@ -426,7 +431,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
   <div class="tiles" id="tiles"></div>
   <h3>Statistics, all included specimens</h3>
   <div class="tbl-wrap"><table id="sumTable" class="tbl-data"></table></div>
-  <p class="sub" style="margin-top:6px">Statistics include only specimens marked <i>Included</i>. SD is the sample standard deviation (n − 1). CV = SD / mean. For the Weibull fit of tensile strength, rank i of n uses F = (i − 0.5)/n and least-squares regression of ln ln[1/(1−F)] on ln σ.</p>
+  <p class="sub" style="margin-top:6px">Values are stored in metric and converted for display, so switching units never changes the data. Statistics include only specimens marked <i>Included</i>. SD is the sample standard deviation (n − 1). CV = SD / mean. For the Weibull fit of tensile strength, rank i of n uses F = (i − 0.5)/n and least-squares regression of ln ln[1/(1−F)] on ln σ.</p>
 
   <h3>Result charts by specimen</h3>
   <div class="legend" data-legend="incl"></div>
@@ -466,7 +471,8 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
    ASTM C749-08 graphite tensile report template
    Single file, works offline. All entries live in `state`; inputs bind
    to it with data-bind="path.to.value"; computed cells use data-out.
-   Units are fixed: mm, N, MPa, strain in mm/mm.
+   Values are always STORED in metric (mm, N, MPa, °C). The unit selector
+   only changes how they are shown and how typed values are read.
    ===================================================================== */
 
 const LS_KEY = "c749-tensile-report-v3";
@@ -477,19 +483,38 @@ const FRACTURE = [
   ["grip","In grip end / holder"],
   ["nr","Not recorded"]
 ];
+
+/* ---------- unit systems: k converts stored metric value -> displayed value ---------- */
+const MM_PER_IN = 25.4, N_PER_LBF = 4.4482216152605, PSI_PER_MPA = 145.0377377;
+const SYS = {
+  metric: { label:"Metric (mm, N, MPa)",
+    len:{u:"mm",k:1,dp:2}, area:{u:"mm²",k:1,dp:2}, force:{u:"N",k:1,dp:1}, stress:{u:"MPa",k:1,dp:2},
+    mod:{u:"MPa",k:1,dp:0}, strain:{u:"mm/mm",k:1,dp:5}, temp:{u:"°C",dp:1}, idx:{u:"",k:1,dp:0} },
+  us: { label:"Standard (in, lbf, psi)",
+    len:{u:"in",k:1/MM_PER_IN,dp:4}, area:{u:"in²",k:1/(MM_PER_IN*MM_PER_IN),dp:5}, force:{u:"lbf",k:1/N_PER_LBF,dp:1}, stress:{u:"psi",k:PSI_PER_MPA,dp:0},
+    mod:{u:"psi",k:PSI_PER_MPA,dp:0}, strain:{u:"in/in",k:1,dp:5}, temp:{u:"°F",dp:1}, idx:{u:"",k:1,dp:0} }
+};
+const UK = kind => SYS[state.units][kind];
+function toD(v, kind){ if(!isNum(v)) return v; if(kind==="temp") return state.units==="us" ? v*9/5+32 : v; return v*UK(kind).k; }
+function fromD(v, kind){ if(!isNum(v)) return v; if(kind==="temp") return state.units==="us" ? (v-32)*5/9 : v; return v/UK(kind).k; }
+/* value shown inside an input box: enough decimals to round-trip, without float noise */
+function inputVal(v, kind){ if(!isNum(v)) return ""; const d = toD(v, kind); return String(Number(d.toFixed(UK(kind).dp+(kind==="temp"?0:1)))); }
+const fk = (v, kind, extra=0) => fmt(toD(v,kind), UK(kind).dp+extra);
+const uOf = kind => UK(kind).u;
+
 /* The nine reported results, in the order the test software lists them. */
 const METRICS = [
-  { k:"loadBreak",   label:"Load at Break (Standard)",           unit:"N",     dp:1 },
-  { k:"dpBreak",     label:"Data point at Break (Standard)",     unit:"",      dp:0 },
-  { k:"stressBreak", label:"Tensile stress at Break (Standard)", unit:"MPa",   dp:2 },
-  { k:"strainBreak", label:"Strain 1 at Break (Standard)",       unit:"mm/mm", dp:5 },
-  { k:"strainGL",    label:"Strain gauge length",                unit:"mm",    dp:2 },
-  { k:"strainTS",    label:"Strain 1 at Tensile Strength",       unit:"mm/mm", dp:5 },
-  { k:"stressTS",    label:"Tensile stress at Tensile Strength", unit:"MPa",   dp:2 },
-  { k:"modYoung",    label:"Modulus (Young's Tensile stress 0.01% - 0.1%)", unit:"MPa", dp:0 },
-  { k:"modE",        label:"Modulus (E-Modulus)",                unit:"MPa",   dp:0 }
+  { k:"loadBreak",   label:"Load at Break (Standard)",           kind:"force"  },
+  { k:"dpBreak",     label:"Data point at Break (Standard)",     kind:"idx"    },
+  { k:"stressBreak", label:"Tensile stress at Break (Standard)", kind:"stress" },
+  { k:"strainBreak", label:"Strain 1 at Break (Standard)",       kind:"strain" },
+  { k:"strainGL",    label:"Strain gauge length",                kind:"len"    },
+  { k:"strainTS",    label:"Strain 1 at Tensile Strength",       kind:"strain" },
+  { k:"stressTS",    label:"Tensile stress at Tensile Strength", kind:"stress" },
+  { k:"modYoung",    label:"Modulus (Young's Tensile stress 0.01% - 0.1%)", kind:"mod" },
+  { k:"modE",        label:"Modulus (E-Modulus)",                kind:"mod"    }
 ];
-const metUnit = m => m.unit ? ` (${m.unit})` : "";
+const metUnit = m => uOf(m.kind) ? ` (${uOf(m.kind)})` : "";
 
 /* ---------- state ---------- */
 function blankSpecimen(i){
@@ -497,9 +522,10 @@ function blankSpecimen(i){
   METRICS.forEach(m=>s[m.k]=null);
   return s;
 }
-function blankState(){
+function blankState(units){
   return {
-    meta:{ status:"Draft" },
+    units: units==="us" ? "us" : "metric",
+    meta:{ status:"Draft", temp:null },
     settings:{ defGL:null, nomD:null },
     specimens:[1,2,3,4,5,6].map(blankSpecimen)
   };
@@ -513,11 +539,14 @@ function load(){
 function normalize(s){
   const b = blankState();
   if(!s || typeof s!=="object") return b;
-  return {
+  const out = {
+    units: s.units==="us" ? "us" : "metric",
     meta: Object.assign(b.meta, s.meta||{}),
     settings: Object.assign(b.settings, s.settings||{}),
     specimens: Array.isArray(s.specimens) ? s.specimens.map((sp,i)=>Object.assign(blankSpecimen(i+1), sp)) : b.specimens
   };
+  if(typeof out.meta.temp === "string") out.meta.temp = parseNum(out.meta.temp);   // older files stored text
+  return out;
 }
 
 /* ---------- helpers ---------- */
@@ -538,8 +567,8 @@ function stats(a){
 }
 
 /* ---------- input renderers ---------- */
-function numInp(path, val, extra=""){
-  return `<input class="n" data-bind="${path}" data-num inputmode="decimal" value="${isNum(val)?val:""}" ${extra}>`;
+function numInp(path, val, kind, extra=""){
+  return `<input class="n" data-bind="${path}" data-num data-kind="${kind}" inputmode="decimal" value="${inputVal(val,kind)}" ${extra}>`;
 }
 function txtInp(path, val, extra=""){ return `<input data-bind="${path}" value="${esc(val)}" ${extra}>`; }
 function sel(path, val, opts, extra=""){
@@ -547,7 +576,7 @@ function sel(path, val, opts, extra=""){
 }
 
 /* =====================================================================
-   COMPUTATION
+   COMPUTATION (metric)
    ===================================================================== */
 let C = null;
 
@@ -573,13 +602,13 @@ function compute(){
     if(isNum(r.dev) && Math.abs(r.dev)>2) r.warn.push(`Load ÷ area differs from stress at break by ${fmt(r.dev,1)} %`);
     if(isNum(r.v.stressBreak) && isNum(r.v.stressTS) && r.v.stressBreak > r.v.stressTS*1.0001) r.warn.push("Stress at break exceeds tensile strength");
     if(isNum(r.v.strainBreak) && isNum(r.v.strainTS) && r.v.strainTS > r.v.strainBreak*1.0001) r.warn.push("Strain at tensile strength exceeds strain at break");
-    if(isNum(r.v.strainBreak) && r.v.strainBreak > 0.05) r.warn.push("Strain at break above 0.05 mm/mm: check that strain is in mm/mm, not %");
+    if(isNum(r.v.strainBreak) && r.v.strainBreak > 0.05) r.warn.push(`Strain at break above 0.05 ${uOf("strain")}: check that strain is not in %`);
     c.sp.push(r);
   }
   const inc = c.sp.filter(r=>r.included);
   c.all = { rows:inc, m:{} };
   METRICS.forEach(m=>c.all.m[m.k]=stats(inc.map(r=>r.v[m.k])));
-  c.all.weib = weibull(inc.map(r=>r.sigma));
+  c.all.weib = weibull(inc.map(r=>toD(r.sigma,"stress")));   // in displayed stress units
   c.nTotal = c.sp.length; c.nTested = c.sp.filter(r=>r.tested).length;
   C = c; return c;
 }
@@ -596,32 +625,61 @@ function weibull(arr){
 }
 
 /* =====================================================================
-   RENDER: tables
+   RENDER
    ===================================================================== */
+function renderUnits(){
+  $("#units").value = state.units;
+  $$("[data-u]").forEach(el=>el.textContent = uOf(el.dataset.u));
+  renderDrawing();
+}
+
+/* Billet drawing: the geometry is fixed in inches; labels follow the unit selector. */
+function dimTxt(inch, dpIn=3){ return state.units==="us" ? inch.toFixed(dpIn) : (inch*MM_PER_IN).toFixed(2); }
+function dual(inch, pre="", post=""){
+  const a = `${inch.toFixed(3)} in`, b = `${(inch*MM_PER_IN).toFixed(2)} mm`;
+  const [p,q] = state.units==="us" ? [a,b] : [b,a];
+  return `${pre}${p} <tspan class="bf-dimsub">(${q})${post}</tspan>`;
+}
+function dualPlain(inch){ const a=`${inch.toFixed(3)} in`, b=`${(inch*MM_PER_IN).toFixed(2)} mm`; return state.units==="us" ? `${a} (${b})` : `${b} (${a})`; }
+function renderDrawing(){
+  $$("[data-in]").forEach(el=>el.textContent = dimTxt(+el.dataset.in));
+  $("#dimNote").textContent = `Dimensions in ${state.units==="us"?"inches":"millimetres"}. Billet Ø${dualPlain(7.75)} × ${dualPlain(1)}.`;
+  $("#dimBillet").innerHTML = dual(7.75, "Ø", " billet");
+  $("#dimLen").innerHTML = dual(4.75);
+  $("#dimEnd1").textContent = state.units==="us" ? "Ø0.500 in" : "Ø12.70 mm";
+  $("#dimEnd2").textContent = state.units==="us" ? "(12.70 mm)" : "(0.500 in)";
+  $("#dimCentre").innerHTML = dual(0.25, "Ø", " centre section");
+  $("#specTitle").textContent = `round tensile specimen, ASTM C749 type: ${dualPlain(0.5)} ends, ${dualPlain(0.25)} centre section`;
+  const L = v => state.units==="us" ? `${v.toFixed(3)} in` : `${(v*MM_PER_IN).toFixed(2)} mm`;
+  $("#locHint").textContent = `Test specimens are machined from an extruded graphite billet, Ø${L(7.75)} × ${L(1)} thick. Each specimen is ${L(4.75)} long, with ${L(0.5)} diameter ends and a ${L(0.25)} diameter centre section. It lies on a diameter through the centre of the billet at mid-thickness, perpendicular to the extrusion axis, with ${L(1.5)} of billet left at each end. Views are drawn to scale.`;
+  $("#capSpec").textContent = `Test specimen: ${L(4.75)} long, Ø${L(0.5)} ends, Ø${L(0.25)} centre section`;
+  $("#capBillet").textContent = `Extruded billet, Ø${L(7.75)} × ${L(1)}`;
+}
+
 function renderSpecTables(){
-  const sp = state.specimens;
+  const sp = state.specimens, ul = uOf("len");
   // dimensions (also where specimens are named, added and removed)
-  let h = `<tr><th>Specimen ID</th><th class="r">Gauge dia. reading 1<small>mm</small></th><th class="r">Gauge dia. reading 2<small>mm</small></th>
-       <th class="r">Mean dia.<small>mm</small></th><th class="r">Area<small>mm²</small></th>
-       <th class="r">Reduced-section length<small>mm</small></th><th class="r">Overall length<small>mm</small></th><th class="no-print"></th></tr>`;
+  let h = `<tr><th>Specimen ID</th><th class="r">Gauge dia. reading 1<small>${ul}</small></th><th class="r">Gauge dia. reading 2<small>${ul}</small></th>
+       <th class="r">Mean dia.<small>${ul}</small></th><th class="r">Area<small>${uOf("area")}</small></th>
+       <th class="r">Reduced-section length<small>${ul}</small></th><th class="r">Overall length<small>${ul}</small></th><th class="no-print"></th></tr>`;
   sp.forEach((s,i)=>{
     h += `<tr><td>${txtInp(`specimens.${i}.id`, s.id, `aria-label="Specimen ID row ${i+1}" style="min-width:70px;font-weight:600"`)}</td>
-      <td>${numInp(`specimens.${i}.d1`, s.d1)}</td><td>${numInp(`specimens.${i}.d2`, s.d2)}</td>
+      <td>${numInp(`specimens.${i}.d1`, s.d1, "len")}</td><td>${numInp(`specimens.${i}.d2`, s.d2, "len")}</td>
       <td class="out" data-out="s${i}.dAvg">—</td><td class="out" data-out="s${i}.A">—</td>
-      <td>${numInp(`specimens.${i}.gl`, s.gl)}</td><td>${numInp(`specimens.${i}.ol`, s.ol)}</td>
+      <td>${numInp(`specimens.${i}.gl`, s.gl, "len")}</td><td>${numInp(`specimens.${i}.ol`, s.ol, "len")}</td>
       <td class="no-print"><button class="icon danger" data-del="${i}" title="Remove specimen" aria-label="Remove specimen ${esc(s.id)}">✕</button></td></tr>`;
   });
   $("#dimTable").innerHTML = h;
 
   // results: the nine software values
-  h = `<tr><th>Specimen</th>${METRICS.map(m=>`<th class="r">${esc(m.label)}<small>${m.unit||"index"}</small></th>`).join("")}</tr>`;
+  h = `<tr><th>Specimen</th>${METRICS.map(m=>`<th class="r">${esc(m.label)}<small>${uOf(m.kind)||"index"}</small></th>`).join("")}</tr>`;
   sp.forEach((s,i)=>{
-    h += `<tr><td class="id" data-out="s${i}.id">${esc(s.id)}</td>${METRICS.map(m=>`<td>${numInp(`specimens.${i}.${m.k}`, s[m.k], `data-ph="s${i}.ph.${m.k}" aria-label="${esc(m.label)}"`)}</td>`).join("")}</tr>`;
+    h += `<tr><td class="id" data-out="s${i}.id">${esc(s.id)}</td>${METRICS.map(m=>`<td>${numInp(`specimens.${i}.${m.k}`, s[m.k], m.kind, `data-ph="s${i}.ph.${m.k}" aria-label="${esc(m.label)}"`)}</td>`).join("")}</tr>`;
   });
   $("#resTable").innerHTML = h;
 
   // acceptance
-  h = `<tr><th>Specimen</th><th>Fracture location</th><th>Include</th><th class="r">Load ÷ area<small>MPa</small></th><th class="r">Difference from stress at break<small>%</small></th><th>Status</th><th>Notes</th></tr>`;
+  h = `<tr><th>Specimen</th><th>Fracture location</th><th>Include</th><th class="r">Load ÷ area<small>${uOf("stress")}</small></th><th class="r">Difference from stress at break<small>%</small></th><th>Status</th><th>Notes</th></tr>`;
   sp.forEach((s,i)=>{
     h += `<tr><td class="id" data-out="s${i}.id">${esc(s.id)}</td>
       <td>${sel(`specimens.${i}.frac`, s.frac, FRACTURE)}</td>
@@ -635,16 +693,16 @@ function renderSpecTables(){
 }
 
 function renderStatic(){
-  $("#pasteOrder").textContent = "[Specimen ID], " + METRICS.map(m=>m.label).join(", ");
+  $("#pasteOrder").textContent = "[Specimen ID], " + METRICS.map(m=>m.label+metUnit(m)).join(", ");
   $$("[data-bind]").forEach(el=>{
     if(el.closest("#dimTable,#resTable,#accTable")) return;
     const v = getPath(state, el.dataset.bind);
-    if(el.hasAttribute("data-num")) el.value = isNum(v) ? v : "";
+    if(el.hasAttribute("data-num")) el.value = inputVal(v, el.dataset.kind || "idx");
     else el.value = v ?? "";
   });
 }
 
-function renderAll(){ renderSpecTables(); renderStatic(); refresh(); }
+function renderAll(){ renderUnits(); renderSpecTables(); renderStatic(); refresh(); }
 
 /* ---------- outputs ---------- */
 function refresh(){
@@ -654,11 +712,11 @@ function refresh(){
   c.sp.forEach((r,i)=>{
     const s=r.s;
     out[`s${i}.id`] = esc(s.id);
-    out[`s${i}.dAvg`] = fmt(r.dAvg, 3);
-    out[`s${i}.A`] = fmt(r.A, 2);
-    out[`s${i}.calc`] = fmt(r.calcBreak, 2);
-    out[`s${i}.dev`] = isNum(r.dev) ? (r.dev>0?"+":"")+fmt(r.dev,2) : "—";
-    METRICS.forEach(m=>{ out[`s${i}.ph.${m.k}`] = r.src[m.k]==="default" ? String(r.v[m.k]) : ""; });
+    out[`s${i}.dAvg`] = fk(r.dAvg, "len", 1);
+    out[`s${i}.A`] = fk(r.A, "area");
+    out[`s${i}.calc`] = fk(r.calcBreak, "stress");
+    out[`s${i}.dev`] = isNum(r.dev) ? (Math.abs(r.dev)<0.005 ? fmt(0,2) : (r.dev>0?"+":"")+fmt(r.dev,2)) : "—";
+    METRICS.forEach(m=>{ out[`s${i}.ph.${m.k}`] = r.src[m.k]==="default" ? inputVal(r.v[m.k], m.kind) : ""; });
     let st;
     if(!r.tested) st = `<span class="st na">Not tested</span>`;
     else if(r.included) st = `<span class="st ok">Included</span>`;
@@ -679,31 +737,31 @@ function refresh(){
 
 /* ---------- summary ---------- */
 function renderSummary(){
-  const a=C.all;
+  const a=C.all, us=uOf("stress");
   const tile = (lab,val,unit,det)=>`<div class="tile"><div class="lab">${lab}</div><div class="val">${val}${unit?`<small>${unit}</small>`:""}</div><div class="det">${det||"&nbsp;"}</div></div>`;
-  const sd = (st,dp) => st.n>1 ? `SD ${fmt(st.sd,dp)} · CV ${fmt(st.cv,1)} %` : "";
+  const sd = (st,kind) => st.n>1 ? `SD ${fk(st.sd,kind)} · CV ${fmt(st.cv,1)} %` : "";
   const ts=a.m.stressTS, sb=a.m.stressBreak, ets=a.m.strainTS, my=a.m.modYoung, me=a.m.modE;
   $("#tiles").innerHTML =
-    tile("Tensile stress at tensile strength", fmt(ts.mean,2), "MPa", sd(ts,2)) +
-    tile("Tensile stress at break", fmt(sb.mean,2), "MPa", sd(sb,2)) +
-    tile("Strain 1 at tensile strength", fmt(ets.mean,5), "mm/mm", ets.n>1?`SD ${fmt(ets.sd,5)}`:"") +
-    tile("Young's modulus", fmt(my.mean,0), "MPa", sd(my,0)) +
-    tile("E-modulus", fmt(me.mean,0), "MPa", sd(me,0)) +
-    tile("Weibull modulus, m", a.weib?fmt(a.weib.m,1):"—", "", a.weib?`σ₀ ${fmt(a.weib.s0,2)} MPa · R² ${fmt(a.weib.r2,3)}`:"needs ≥ 3 specimens") +
+    tile("Tensile stress at tensile strength", fk(ts.mean,"stress"), us, sd(ts,"stress")) +
+    tile("Tensile stress at break", fk(sb.mean,"stress"), us, sd(sb,"stress")) +
+    tile("Strain 1 at tensile strength", fk(ets.mean,"strain"), uOf("strain"), ets.n>1?`SD ${fk(ets.sd,"strain")}`:"") +
+    tile("Young's modulus", fk(my.mean,"mod"), uOf("mod"), sd(my,"mod")) +
+    tile("E-modulus", fk(me.mean,"mod"), uOf("mod"), sd(me,"mod")) +
+    tile("Weibull modulus, m", a.weib?fmt(a.weib.m,1):"—", "", a.weib?`σ₀ ${fmt(a.weib.s0,UK("stress").dp)} ${us} · R² ${fmt(a.weib.r2,3)}`:"needs ≥ 3 specimens") +
     tile("Specimens included", `${a.rows.length}`, `of ${C.nTotal}`, `${C.nTested} tested · ${C.nTested-a.rows.length} excluded`);
 
   let h = `<tr><th>Result</th><th>Unit</th><th class="r">n</th><th class="r">Mean</th><th class="r">SD</th><th class="r">CV<small>%</small></th><th class="r">Min</th><th class="r">Max</th></tr>`;
   for(const m of METRICS){
-    const s=a.m[m.k], dp=m.dp;
-    h += `<tr><td>${esc(m.label)}</td><td>${m.unit||"—"}</td><td class="r">${s.n||0}</td><td class="r"><b>${s.n?fmt(s.mean,dp+(m.k==="dpBreak"?1:0)):"—"}</b></td>
-      <td class="r">${s.n>1?fmt(s.sd,dp+1):"—"}</td><td class="r">${s.n>1&&isNum(s.cv)?fmt(s.cv,1):"—"}</td><td class="r">${s.n?fmt(s.min,dp):"—"}</td><td class="r">${s.n?fmt(s.max,dp):"—"}</td></tr>`;
+    const s=a.m[m.k], kd=m.kind;
+    h += `<tr><td>${esc(m.label)}</td><td>${uOf(kd)||"—"}</td><td class="r">${s.n||0}</td><td class="r"><b>${s.n?fk(s.mean,kd,kd==="idx"?1:0):"—"}</b></td>
+      <td class="r">${s.n>1?fk(s.sd,kd,1):"—"}</td><td class="r">${s.n>1&&isNum(s.cv)?fmt(s.cv,1):"—"}</td><td class="r">${s.n?fk(s.min,kd):"—"}</td><td class="r">${s.n?fk(s.max,kd):"—"}</td></tr>`;
   }
-  h += `<tr><td>Weibull modulus m / characteristic strength σ₀ (tensile stress at tensile strength)</td><td>— / MPa</td><td class="r">${a.weib?a.weib.n:0}</td><td class="r" colspan="5" style="text-align:left">${a.weib?`m = ${fmt(a.weib.m,2)} · σ₀ = ${fmt(a.weib.s0,2)} MPa · R² = ${fmt(a.weib.r2,3)}`:"needs ≥ 3 included specimens"}</td></tr>`;
+  h += `<tr><td>Weibull modulus m / characteristic strength σ₀ (tensile stress at tensile strength)</td><td>— / ${us}</td><td class="r">${a.weib?a.weib.n:0}</td><td class="r" colspan="5" style="text-align:left">${a.weib?`m = ${fmt(a.weib.m,2)} · σ₀ = ${fmt(a.weib.s0,UK("stress").dp)} ${us} · R² = ${fmt(a.weib.r2,3)}`:"needs ≥ 3 included specimens"}</td></tr>`;
   $("#sumTable").innerHTML = h;
 }
 
 /* =====================================================================
-   CHARTS (inline SVG, no dependencies)
+   CHARTS (inline SVG, no dependencies) - drawn in displayed units
    ===================================================================== */
 function niceScale(min, max, count=5, zero=false){
   if(!isNum(min)||!isNum(max)){ min=0; max=1; }
@@ -717,7 +775,12 @@ function niceScale(min, max, count=5, zero=false){
   return { lo, hi, ticks, step, dp };
 }
 const lin = (d0,d1,r0,r1) => v => r0 + (v-d0)*(r1-r0)/((d1-d0)||1);
-function tickFmt(t, dp){ return Math.abs(t)>=10000 ? fmt(t/1000, Math.max(0,dp-3))+"K" : fmt(t,dp); }
+function tickFmt(t, dp){
+  const a = Math.abs(t);
+  if(a>=1e6) return fmt(t/1e6, a%1e6 ? 2 : 0)+"M";
+  if(a>=1e4) return fmt(t/1e3, Math.max(0,dp-3))+"K";
+  return fmt(t,dp);
+}
 const svgOpen = (W,H,label) => `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}">`;
 function emptyChart(W,H,msg,label){ return `${svgOpen(W,H,label)}<text class="empty" x="${W/2}" y="${H/2}" text-anchor="middle">${esc(msg)}</text></svg>`; }
 const clsFor = r => r.included ? "par" : "ex";
@@ -738,45 +801,44 @@ function colPath(x,w,y0,y1,r){
 }
 function renderMetricCharts(){
   const box = $("#metricCharts");
-  if(box.children.length !== METRICS.length){
-    box.innerHTML = METRICS.map(m=>`<div class="chart"><h4>${esc(m.label+metUnit(m))}</h4><div class="cap" data-mcap="${m.k}"></div><div data-mchart="${m.k}"></div></div>`).join("");
-  }
+  box.innerHTML = METRICS.map(m=>`<div class="chart"><h4>${esc(m.label+metUnit(m))}</h4><div class="cap" data-mcap="${m.k}"></div><div data-mchart="${m.k}"></div></div>`).join("");
   for(const m of METRICS){
-    const a = C.all.m[m.k];
-    $(`[data-mcap="${m.k}"]`, box).textContent = a.n ? `Mean ${fmt(a.mean,m.dp)}${m.unit?" "+m.unit:""}${a.n>1?` · SD ${fmt(a.sd,m.dp+1)} · CV ${fmt(a.cv,1)} %`:""} · n = ${a.n}` : "No included results yet.";
+    const a = C.all.m[m.k], u = uOf(m.kind);
+    $(`[data-mcap="${m.k}"]`, box).textContent = a.n ? `Mean ${fk(a.mean,m.kind)}${u?" "+u:""}${a.n>1?` · SD ${fk(a.sd,m.kind,1)} · CV ${fmt(a.cv,1)} %`:""} · n = ${a.n}` : "No included results yet.";
     $(`[data-mchart="${m.k}"]`, box).innerHTML = columnChart(m);
   }
 }
 function columnChart(m){
-  const rows = C.sp.filter(r=>isNum(r.v[m.k])), n=rows.length, W=460, H=250, mg={t:14,r:52,b:46,l:58};
+  const rows = C.sp.filter(r=>isNum(r.v[m.k])), n=rows.length, W=460, H=250, mg={t:14,r:56,b:46,l:62};
   if(!n) return emptyChart(W,H,"No values entered",m.label);
-  const a = C.all.m[m.k];
-  const vals = rows.map(r=>r.v[m.k]);
-  const hiV = Math.max(...vals, a.n>1? a.mean+a.sd : -Infinity), loV = Math.min(...vals, 0);
+  const a = C.all.m[m.k], D = v => toD(v, m.kind), dp = UK(m.kind).dp, u = uOf(m.kind);
+  const vals = rows.map(r=>D(r.v[m.k]));
+  const mean_ = a.n ? D(a.mean) : null, sd_ = a.n>1 ? D(a.sd) : null;
+  const hiV = Math.max(...vals, isNum(sd_)? mean_+sd_ : -Infinity), loV = Math.min(...vals, 0);
   const ys = niceScale(loV, hiV*1.04, 4, true), sy = lin(ys.lo,ys.hi,H-mg.b,mg.t);
   const band = (W-mg.l-mg.r)/n, bw = Math.min(24, band*0.62);
   let s = svgOpen(W,H,m.label + " by specimen");
   for(const t of ys.ticks){ const y=sy(t); s += `<line class="grid" x1="${mg.l}" x2="${W-mg.r}" y1="${y}" y2="${y}"/><text class="tick" x="${mg.l-7}" y="${y}" text-anchor="end" dominant-baseline="middle">${tickFmt(t,ys.dp)}</text>`; }
-  if(a.n>1) s += `<rect class="band" x="${mg.l}" width="${W-mg.l-mg.r}" y="${sy(a.mean+a.sd)}" height="${Math.max(0,sy(a.mean-a.sd)-sy(a.mean+a.sd))}"/>`;
+  if(isNum(sd_)) s += `<rect class="band" x="${mg.l}" width="${W-mg.l-mg.r}" y="${sy(mean_+sd_)}" height="${Math.max(0,sy(mean_-sd_)-sy(mean_+sd_))}"/>`;
   rows.forEach((r,i)=>{
-    const x = mg.l + band*i + (band-bw)/2, v=r.v[m.k];
-    const tip = `${r.s.id}\n${m.label}\n${fmt(v,m.dp)}${m.unit?" "+m.unit:""}${r.src[m.k]==="default"?" (default)":""}\n${r.included?"Included":"Excluded"}`;
+    const x = mg.l + band*i + (band-bw)/2, v=D(r.v[m.k]);
+    const tip = `${r.s.id}\n${m.label}\n${fmt(v,dp)}${u?" "+u:""}${r.src[m.k]==="default"?" (default)":""}\n${r.included?"Included":"Excluded"}`;
     s += `<path class="${clsFor(r)}" d="${colPath(x,bw,sy(0),sy(v),4)}" tabindex="0" data-tip="${esc(tip)}"/>`;
     if(n<=20){ const lx=x+bw/2, ly=H-mg.b+12; s += `<text class="tick" x="${lx}" y="${ly}" text-anchor="end" transform="rotate(-40 ${lx} ${ly})">${esc(r.s.id)}</text>`; }
   });
   s += `<line class="axis" x1="${mg.l}" x2="${W-mg.r}" y1="${sy(0)}" y2="${sy(0)}"/>`;
-  if(a.n){
-    const y=sy(a.mean);
-    s += `<line class="meanln" x1="${mg.l}" x2="${W-mg.r}" y1="${y}" y2="${y}"/><text class="lbl-strong" x="${W-mg.r+6}" y="${y-6}" dominant-baseline="middle">Mean</text><text class="lbl" x="${W-mg.r+6}" y="${y+7}" dominant-baseline="middle">${tickFmt(a.mean, m.dp>3?4:m.dp)}</text>`;
+  if(isNum(mean_)){
+    const y=sy(mean_);
+    s += `<line class="meanln" x1="${mg.l}" x2="${W-mg.r}" y1="${y}" y2="${y}"/><text class="lbl-strong" x="${W-mg.r+6}" y="${y-6}" dominant-baseline="middle">Mean</text><text class="lbl" x="${W-mg.r+6}" y="${y+7}" dominant-baseline="middle">${tickFmt(mean_, dp>3?4:dp)}</text>`;
   }
   return s + `</svg>`;
 }
 
 /* --- Weibull --- */
 function chartWeib(){
-  const w = C.all.weib, W=1040, H=360, m={t:14,r:18,b:42,l:56};
+  const w = C.all.weib, W=1040, H=360, m={t:14,r:18,b:42,l:56}, us=uOf("stress"), dp=UK("stress").dp;
   if(!w){ $("#chWeib").innerHTML = emptyChart(W,H,"At least 3 included specimens are needed","Weibull plot"); $("#weibCap").textContent="Included specimens."; return; }
-  $("#weibCap").textContent = `Included specimens (n = ${w.n}). Dots are specimens; the line is the least-squares fit. m = ${fmt(w.m,1)}, σ₀ = ${fmt(w.s0,2)} MPa, R² = ${fmt(w.r2,3)}.`;
+  $("#weibCap").textContent = `Included specimens (n = ${w.n}). Dots are specimens; the line is the least-squares fit. m = ${fmt(w.m,1)}, σ₀ = ${fmt(w.s0,dp)} ${us}, R² = ${fmt(w.r2,3)}.`;
   const smin = w.pts[0].s, smax = w.pts[w.n-1].s;
   const pad = (smax-smin)*0.08 || smax*0.05;
   const xs = niceScale(smin-pad, smax+pad, 6);
@@ -795,8 +857,8 @@ function chartWeib(){
   if(x2>x1) s += `<line class="fitln" x1="${sxl(x1)}" y1="${sy(f(x1))}" x2="${sxl(x2)}" y2="${sy(f(x2))}"/>`;
   const inc = C.all.rows.filter(r=>isNum(r.sigma)&&r.sigma>0).sort((a,b)=>a.sigma-b.sigma);
   w.pts.forEach((p,i)=>{ const r = inc[i];
-    s += `<circle class="dot par" cx="${sx(p.s)}" cy="${sy(p.y)}" r="5" tabindex="0" data-tip="${esc(r?r.s.id:"")}\nσ ${fmt(p.s,2)} MPa\nRank ${i+1} of ${w.n} · F = ${fmt(p.F*100,1)} %"/>`; });
-  s += `<text class="alab" x="${(m.l+W-m.r)/2}" y="${H-4}" text-anchor="middle">Tensile stress at tensile strength (MPa), log scale</text>`;
+    s += `<circle class="dot par" cx="${sx(p.s)}" cy="${sy(p.y)}" r="5" tabindex="0" data-tip="${esc(r?r.s.id:"")}\nσ ${fmt(p.s,dp)} ${us}\nRank ${i+1} of ${w.n} · F = ${fmt(p.F*100,1)} %"/>`; });
+  s += `<text class="alab" x="${(m.l+W-m.r)/2}" y="${H-4}" text-anchor="middle">Tensile stress at tensile strength (${us}), log scale</text>`;
   s += `<text class="alab" transform="translate(13 ${(m.t+H-m.b)/2}) rotate(-90)" text-anchor="middle">Probability of failure (%)</text></svg>`;
   $("#chWeib").innerHTML = s;
 }
@@ -826,10 +888,11 @@ document.addEventListener("focusout", e=>{ if(e.target.closest?.("[data-tip]")) 
 document.addEventListener("input", e=>{
   const el = e.target, p = el.dataset?.bind; if(!p) return;
   let v = el.value;
-  if(el.hasAttribute("data-num")) v = parseNum(v);
+  if(el.hasAttribute("data-num")) v = fromD(parseNum(v), el.dataset.kind || "idx");
   setPath(state, p, v);
   refresh(); save();
 });
+$("#units").addEventListener("change", e=>{ state.units = e.target.value==="us" ? "us" : "metric"; renderAll(); save(); });
 document.addEventListener("click", e=>{
   const d = e.target.closest?.("[data-del]"); if(!d) return;
   const i = +d.dataset.del, s = state.specimens[i];
@@ -848,7 +911,7 @@ function addSpecimens(n){
 $("#btnAdd").onclick = ()=>addSpecimens(1);
 $("#btnAdd5").onclick = ()=>addSpecimens(5);
 
-/* ---------- paste results table ---------- */
+/* ---------- paste results table (values in the units currently selected) ---------- */
 $("#btnResPaste").onclick = ()=>{
   const msg = $("#resPasteMsg"), lines = $("#resPaste").value.split(/\r?\n/);
   let next = 0, filled = 0, added = 0;
@@ -868,7 +931,7 @@ $("#btnResPaste").onclick = ()=>{
       i = next++;
       if(i >= state.specimens.length){ state.specimens.push(blankSpecimen(state.specimens.length+1)); added++; }
     }
-    METRICS.forEach((m,j)=>{ if(isNum(nums[j])) state.specimens[i][m.k] = nums[j]; });
+    METRICS.forEach((m,j)=>{ if(isNum(nums[j])) state.specimens[i][m.k] = fromD(nums[j], m.kind); });
     filled++;
   }
   msg.textContent = filled ? `Filled ${filled} specimen row${filled>1?"s":""}${added?`, added ${added}`:""}.` : "No numeric rows found.";
@@ -881,7 +944,7 @@ function download(name, text, type){
   document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 const fileBase = () => "C749-" + ((state.meta.reportNo||"report").replace(/[^\w.-]+/g,"_"));
-$("#btnSave").onclick = ()=> download(fileBase()+".json", JSON.stringify({format:"astm-c749-report", version:3, saved:new Date().toISOString(), data:state}, null, 1), "application/json");
+$("#btnSave").onclick = ()=> download(fileBase()+".json", JSON.stringify({format:"astm-c749-report", version:3, storedUnits:"metric (mm, N, MPa, °C)", saved:new Date().toISOString(), data:state}, null, 1), "application/json");
 $("#btnLoad").onclick = ()=> $("#fileLoad").click();
 $("#fileLoad").onchange = e=>{
   const f = e.target.files[0]; if(!f) return;
@@ -890,30 +953,32 @@ $("#fileLoad").onchange = e=>{
   rd.readAsText(f);
 };
 $("#btnCsv").onclick = ()=>{
-  const head = ["Specimen ID","Dia 1 (mm)","Dia 2 (mm)","Mean dia (mm)","Area (mm2)","Reduced-section length (mm)","Overall length (mm)",
+  const ul = uOf("len");
+  const head = ["Specimen ID",`Dia 1 (${ul})`,`Dia 2 (${ul})`,`Mean dia (${ul})`,`Area (${uOf("area")})`,`Reduced-section length (${ul})`,`Overall length (${ul})`,
     ...METRICS.map(m=>m.label+metUnit(m)),
-    "Load / area (MPa)","Fracture location","Included","Checks","Notes"];
+    `Load / area (${uOf("stress")})`,"Fracture location","Included","Checks","Notes"];
   const q = v => { const s = v==null ? "" : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s; };
-  const n = (v,dp)=> isNum(v) ? v.toFixed(dp) : "";
-  const rows = C.sp.map(r=>{ const s=r.s; return [s.id,s.d1,s.d2,n(r.dAvg,4),n(r.A,3),s.gl,s.ol,
-    ...METRICS.map(m=>isNum(r.v[m.k]) ? r.v[m.k] : ""),
-    n(r.calcBreak,3),(FRACTURE.find(f=>f[0]===s.frac)||["",""])[1],r.included?"Yes":"No",r.warn.join("; "),s.notes]; });
+  const n = (v,kind,extra=1)=> isNum(v) ? toD(v,kind).toFixed(UK(kind).dp+extra) : "";
+  const rows = C.sp.map(r=>{ const s=r.s; return [s.id,n(s.d1,"len"),n(s.d2,"len"),n(r.dAvg,"len",2),n(r.A,"area"),n(s.gl,"len"),n(s.ol,"len"),
+    ...METRICS.map(m=>n(r.v[m.k], m.kind, m.kind==="idx"?0:1)),
+    n(r.calcBreak,"stress"),(FRACTURE.find(f=>f[0]===s.frac)||["",""])[1],r.included?"Yes":"No",r.warn.join("; "),s.notes]; });
   download(fileBase()+"-specimens.csv", "﻿"+[head,...rows].map(r=>r.map(q).join(",")).join("\r\n"), "text/csv");
 };
 $("#btnPrint").onclick = ()=> window.print();
 
 $("#btnClear").onclick = ()=>{
   if(!confirm("Start a new blank report? Current entries in this browser will be cleared. Save the data first if you need it.")) return;
-  state = blankState(); renderAll(); save();
+  state = blankState(state.units); renderAll(); save();
 };
 $("#btnExample").onclick = ()=>{
   if(!confirm("Replace the current entries with example graphite test data?")) return;
-  state = exampleState(); renderAll(); save();
+  const u = state.units; state = exampleState(); state.units = u; renderAll(); save();
 };
 
 /* =====================================================================
    EXAMPLE DATA: 10 specimens. Illustrative values only, derived from
    simulated load-strain records so the nine results are consistent.
+   Stored in metric like all other data.
    ===================================================================== */
 function exampleState(){
   let seed = 749;
@@ -925,7 +990,7 @@ function exampleState(){
     labName:"Example Materials Test Laboratory", reportNo:"EX-2026-0101", reportDate:"2026-11-05", revision:"0", status:"Draft",
     customer:"Example customer", poNo:"WO-0000", grade:"Extruded graphite billet, Ø7.750 × 1.000 in (example)", manufacturer:"—",
     machine:"Electromechanical universal test machine", machineId:"UTM-01", loadCell:"10 kN", rate:"Crosshead 0.5 mm/min",
-    temp:"22", rh:"45", testDate:"2026-11-02 to 2026-11-03", operator:"A. Technician",
+    temp:22, rh:"45", testDate:"2026-11-02 to 2026-11-03", operator:"A. Technician",
     dimInstrument:"Digital micrometer MIC-07",
     remarks:"S-09 fractured in the fillet and is excluded from statistics. Fracture surfaces on all other specimens were flat and granular.",
     conclusion:""

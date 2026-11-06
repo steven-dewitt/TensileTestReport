@@ -15,7 +15,12 @@ finished report.
 5. Use **Print / PDF** to produce the issued report. The input boxes print as plain text.
 6. **Export CSV** downloads one row per specimen, with every entered and calculated value.
 
-All units are fixed: mm, N, MPa, and strain in mm/mm.
+**Units.** Use the **Units** selector in the toolbar to switch between
+**Metric** (mm, N, MPa, mm/mm, °C) and **Standard** (in, lbf, psi, in/in, °F).
+Values are always stored in metric and converted for display, so switching back
+and forth never changes the data. Typed and pasted values are read in the units
+currently selected. The choice is saved with the report, and the billet drawing,
+tables, charts, summaries and CSV export all follow it.
 
 ## Report sections
 
