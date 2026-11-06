@@ -12,7 +12,7 @@ finished report.
 2. Click **Load example data** to see a filled-in report, or **New blank report** to start one.
 3. Fill in the sections from top to bottom. Entries save automatically in the browser.
 4. Use **Save data (.json)** to keep a permanent copy of a report and **Open data…** to reload it.
-5. Use **Print / PDF** to produce the issued report. The input boxes print as plain text.
+5. Use **Print / PDF** to produce the issued report. The input boxes print as plain text, and data-entry instructions, prompts and tools appear only on screen, not in the printout.
 6. **Export CSV** downloads one row per specimen, with every entered and calculated value.
 
 **Units.** Use the **Units** selector in the toolbar to switch between

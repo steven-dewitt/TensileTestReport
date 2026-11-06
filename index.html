@@ -221,6 +221,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
   input,select,textarea{border:none!important;background:transparent!important;padding:1px 2px!important;appearance:none;-webkit-appearance:none}
   select{background-image:none}
   input::-webkit-calendar-picker-indicator{display:none}
+  input.print-empty{visibility:hidden}
   textarea{resize:none;min-height:0}
   th,td{padding:3px 4px}
   .chart,.tile{break-inside:avoid}
@@ -263,7 +264,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
     <div>
       <h1>Tensile Stress–Strain Test Report <span class="badge" id="statusBadge">Draft</span></h1>
       <div class="std">Carbon and Graphite · ASTM C749-08, Standard Test Method for Tensile Stress-Strain of Carbon and Graphite</div>
-      <div class="sub" style="margin-top:6px"><input data-bind="meta.labName" placeholder="Laboratory name / address" style="max-width:420px" aria-label="Laboratory name"></div>
+      <div class="sub" style="margin-top:6px"><input class="ph-instr" data-bind="meta.labName" placeholder="Laboratory name / address" style="max-width:420px" aria-label="Laboratory name"></div>
     </div>
     <div class="ids">
       <span>Report no.</span><input data-bind="meta.reportNo" aria-label="Report number">
@@ -286,7 +287,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
     <label class="field"><span>Test machine (make / model)</span><input data-bind="meta.machine"></label>
     <label class="field"><span>Machine asset / ID no.</span><input data-bind="meta.machineId"></label>
     <label class="field"><span>Load cell capacity</span><input data-bind="meta.loadCell"></label>
-    <label class="field"><span>Loading rate (crosshead speed or stress rate, with units)</span><input data-bind="meta.rate"></label>
+    <label class="field"><span>Loading rate<span class="no-print"> (crosshead speed or stress rate, with units)</span></span><input data-bind="meta.rate"></label>
     <label class="field"><span>Test temperature (<span data-u="temp"></span>)</span><input class="n" data-bind="meta.temp" data-num data-kind="temp" inputmode="decimal"></label>
     <label class="field"><span>Relative humidity (%)</span><input data-bind="meta.rh"></label>
     <label class="field"><span>Test date(s)</span><input data-bind="meta.testDate"></label>
@@ -389,7 +390,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
 <!-- ================= SPECIMEN DIMENSIONS ================= -->
 <section class="sheet pb" id="sec-dim">
   <h2><span class="num">3</span> Specimen dimensions</h2>
-  <p class="hint">Measure the gauge-section diameter twice at the minimum section, 90° apart. The cross-sectional area comes from the mean diameter and is used to check the reported stress at break.</p>
+  <p class="hint no-print">Measure the gauge-section diameter twice at the minimum section, 90° apart. The cross-sectional area comes from the mean diameter and is used to check the reported stress at break.</p>
   <div class="grid" style="margin-bottom:10px">
     <label class="field"><span>Nominal gauge diameter (<span data-u="len"></span>)</span><input class="n" data-bind="settings.nomD" data-num data-kind="len" inputmode="decimal"></label>
     <label class="field"><span>Measuring instrument / ID</span><input data-bind="meta.dimInstrument"></label>
@@ -404,7 +405,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
 <!-- ================= TEST RESULTS ================= -->
 <section class="sheet pb" id="sec-res">
   <h2><span class="num">4</span> Test results by specimen</h2>
-  <p class="hint">Enter the values reported by the test software for each specimen, in the units selected at the top of the page. If strain gauge length is left blank, the default below is used.</p>
+  <p class="hint no-print">Enter the values reported by the test software for each specimen, in the units selected at the top of the page. If strain gauge length is left blank, the default below is used.</p>
   <div class="grid" style="margin-bottom:10px">
     <label class="field"><span>Strain gauge length, default for all specimens (<span data-u="len"></span>)</span><input class="n" data-bind="settings.defGL" data-num data-kind="len" inputmode="decimal"></label>
   </div>
@@ -421,7 +422,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
   </details>
 
   <h3>Fracture and acceptance</h3>
-  <p class="hint">Set <b>Include</b> to <i>Auto</i> to count only specimens that broke inside the gauge length. The check column compares load at break ÷ measured area with the reported stress at break.</p>
+  <p class="hint no-print">Set <b>Include</b> to <i>Auto</i> to count only specimens that broke inside the gauge length. The check column compares load at break ÷ measured area with the reported stress at break.</p>
   <div class="tbl-wrap"><table id="accTable" class="tbl-data"></table></div>
 </section>
 
@@ -431,7 +432,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
   <div class="tiles" id="tiles"></div>
   <h3>Statistics, all included specimens</h3>
   <div class="tbl-wrap"><table id="sumTable" class="tbl-data"></table></div>
-  <p class="sub" style="margin-top:6px">Values are stored in metric and converted for display, so switching units never changes the data. Statistics include only specimens marked <i>Included</i>. SD is the sample standard deviation (n − 1). CV = SD / mean. For the Weibull fit of tensile strength, rank i of n uses F = (i − 0.5)/n and least-squares regression of ln ln[1/(1−F)] on ln σ.</p>
+  <p class="sub" style="margin-top:6px"><span class="no-print">Values are stored in metric and converted for display, so switching units never changes the data. </span>Statistics include only specimens marked <i>Included</i>. SD is the sample standard deviation (n − 1). CV = SD / mean. For the Weibull fit of tensile strength, rank i of n uses F = (i − 0.5)/n and least-squares regression of ln ln[1/(1−F)] on ln σ.</p>
 
   <h3>Result charts by specimen</h3>
   <div class="legend" data-legend="incl"></div>
@@ -451,7 +452,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
 <section class="sheet" id="sec-sign">
   <h2><span class="num">6</span> Remarks and approval</h2>
   <div class="grid">
-    <label class="field wide"><span>Remarks / observations (fracture appearance, anomalies)</span><textarea data-bind="meta.remarks" rows="3"></textarea></label>
+    <label class="field wide"><span>Remarks / observations<span class="no-print"> (fracture appearance, anomalies)</span></span><textarea data-bind="meta.remarks" rows="3"></textarea></label>
     <label class="field wide"><span>Conclusion / conformance statement</span><textarea data-bind="meta.conclusion" rows="2"></textarea></label>
   </div>
   <div class="sign">
@@ -965,6 +966,16 @@ $("#btnCsv").onclick = ()=>{
   download(fileBase()+"-specimens.csv", "﻿"+[head,...rows].map(r=>r.map(q).join(",")).join("\r\n"), "text/csv");
 };
 $("#btnPrint").onclick = ()=> window.print();
+/* While printing: hide empty date boxes (their mm/dd/yyyy prompt) and instruction placeholders. */
+function printMode(on){
+  document.querySelectorAll('input[type="date"]').forEach(el=>el.classList.toggle("print-empty", on && !el.value));
+  document.querySelectorAll(".ph-instr").forEach(el=>{
+    if(on){ el.dataset.ph0 = el.placeholder; el.placeholder = ""; }
+    else if(el.dataset.ph0 !== undefined){ el.placeholder = el.dataset.ph0; }
+  });
+}
+window.addEventListener("beforeprint", ()=>printMode(true));
+window.addEventListener("afterprint", ()=>printMode(false));
 
 $("#btnClear").onclick = ()=>{
   if(!confirm("Start a new blank report? Current entries in this browser will be cleared. Save the data first if you need it.")) return;
