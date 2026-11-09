@@ -28,12 +28,13 @@ tables, charts, summaries and CSV export all follow it.
 |---|---------|----------|
 | 1 | Test request and material | Customer, PO / work order, material grade, manufacturer; test machine, machine ID, load cell capacity, loading rate, temperature, humidity, test dates, operator |
 | 2 | Specimen location in billet | Drawings to scale of the extruded billet, Ø7.750 × 1.000 in thick, and the test specimen. The plan view and section A–A show the 4.750 in specimen lying on a diameter through the billet centre at mid-thickness, perpendicular to the extrusion axis, with 1.500 in of billet at each end. A specimen detail shows the Ø0.500 in ends and Ø0.250 in centre section. |
-| 3 | Specimen dimensions | Specimen IDs, two gauge-diameter readings 90° apart, reduced-section length and overall length. The page gives the mean diameter and cross-sectional area. Specimens are added and removed here. |
-| 4 | Test results by specimen | The nine values reported by the test software (below), fracture location, include/exclude and notes. A load ÷ area check flags reported stresses that don't match the measured area. |
-| 5 | Summary of results | Summary tiles, statistics for every result (n, mean, SD, CV, min, max), a chart for each result by specimen, and a Weibull plot of tensile strength |
-| 6 | Remarks and approval | Observations, conclusion and signatures |
+| 3 | Test setup (load train) | The ASTM C749-08 load train diagram (crossheads, strained chains of 4 links or more, optional parasitic stress monitor, grips, precision chain attachments and specimen), with a short description of each part |
+| 4 | Specimen dimensions | Specimen IDs, two gauge-diameter readings 90° apart, reduced-section length and overall length. The page gives the mean diameter and cross-sectional area. Specimens are added and removed here. |
+| 5 | Test results by specimen | The nine values reported by the test software (below), fracture location, include/exclude and notes. A load ÷ area check flags reported stresses that don't match the measured area. |
+| 6 | Summary of results | Summary tiles, statistics for every result (n, mean, SD, CV, min, max), a chart for each result by specimen, and a Weibull plot of tensile strength |
+| 7 | Remarks and approval | Observations, conclusion and signatures |
 
-### Results entered per specimen (Section 4)
+### Results entered per specimen (Section 5)
 
 | Result | Unit |
 |--------|------|
