@@ -50,8 +50,8 @@ tables, charts, summaries and CSV export all follow it.
 Values can be typed in, or pasted in bulk with **Paste a results table from the
 test software**. Paste one row per specimen with the columns in the order above,
 optionally preceded by a specimen ID column. Rows with IDs are matched by ID.
-Header and unit rows are skipped. If strain gauge length is left blank, the
-default entered at the top of Section 4 is used.
+Header and unit rows are skipped. Strain gauge length is entered for each
+specimen, since it differs slightly from one specimen to the next.
 
 ## Calculations
 

@@ -502,10 +502,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
 <!-- ================= TEST RESULTS ================= -->
 <section class="sheet pb" id="sec-res">
   <h2><span class="num">4</span> Test results by specimen</h2>
-  <p class="hint no-print">Enter the values reported by the test software for each specimen, in the units selected at the top of the page. If strain gauge length is left blank, the default below is used.</p>
-  <div class="grid" style="margin-bottom:10px">
-    <label class="field"><span>Strain gauge length, default for all specimens (<span data-u="len"></span>)</span><input class="n" data-bind="settings.defGL" data-num data-kind="len" inputmode="decimal"></label>
-  </div>
+  <p class="hint no-print">Enter the values reported by the test software for each specimen, including its own strain gauge length, in the units selected at the top of the page.</p>
   <div class="tbl-wrap"><table id="resTable" class="tbl-data tbl-res"></table></div>
 
   <details class="no-print paste">
@@ -624,7 +621,7 @@ function blankState(units){
   return {
     units: units==="us" ? "us" : "metric",
     meta:{ status:"Draft", temp:null },
-    settings:{ defGL:null, nomD:null },
+    settings:{ nomD:null },
     specimens:[1,2,3,4,5,6].map(blankSpecimen)
   };
 }
@@ -644,6 +641,10 @@ function normalize(s){
     specimens: Array.isArray(s.specimens) ? s.specimens.map((sp,i)=>Object.assign(blankSpecimen(i+1), sp)) : b.specimens
   };
   if(typeof out.meta.temp === "string") out.meta.temp = parseNum(out.meta.temp);   // older files stored text
+  const oldGL = out.settings.defGL;                                                // retired shared default
+  const num = v => typeof v==="number" && Number.isFinite(v);                       // runs before the helpers below are defined
+  if(num(oldGL)) out.specimens.forEach(sp=>{ if(!num(sp.strainGL)) sp.strainGL = oldGL; });
+  delete out.settings.defGL;
   return out;
 }
 
@@ -686,7 +687,6 @@ function compute(){
     r.A = isNum(r.dAvg) ? Math.PI*r.dAvg*r.dAvg/4 : null;
     for(const m of METRICS){
       if(isNum(s[m.k])){ r.v[m.k]=s[m.k]; r.src[m.k]="entered"; }
-      else if(m.k==="strainGL" && isNum(st.defGL)){ r.v[m.k]=st.defGL; r.src[m.k]="default"; }
       else { r.v[m.k]=null; r.src[m.k]=""; }
     }
     // tensile strength used for the Weibull analysis
@@ -814,7 +814,6 @@ function refresh(){
     out[`s${i}.A`] = fk(r.A, "area");
     out[`s${i}.calc`] = fk(r.calcBreak, "stress");
     out[`s${i}.dev`] = isNum(r.dev) ? (Math.abs(r.dev)<0.005 ? fmt(0,2) : (r.dev>0?"+":"")+fmt(r.dev,2)) : "—";
-    METRICS.forEach(m=>{ out[`s${i}.ph.${m.k}`] = r.src[m.k]==="default" ? inputVal(r.v[m.k], m.kind) : ""; });
     let st;
     if(!r.tested) st = `<span class="st na">Not tested</span>`;
     else if(r.included) st = `<span class="st ok">Included</span>`;
@@ -920,7 +919,7 @@ function columnChart(m){
   if(isNum(sd_)) s += `<rect class="band" x="${mg.l}" width="${W-mg.l-mg.r}" y="${sy(mean_+sd_)}" height="${Math.max(0,sy(mean_-sd_)-sy(mean_+sd_))}"/>`;
   rows.forEach((r,i)=>{
     const x = mg.l + band*i + (band-bw)/2, v=D(r.v[m.k]);
-    const tip = `${r.s.id}\n${m.label}\n${fmt(v,dp)}${u?" "+u:""}${r.src[m.k]==="default"?" (default)":""}\n${r.included?"Included":"Excluded"}`;
+    const tip = `${r.s.id}\n${m.label}\n${fmt(v,dp)}${u?" "+u:""}\n${r.included?"Included":"Excluded"}`;
     s += `<path class="${clsFor(r)}" d="${colPath(x,bw,sy(0),sy(v),4)}" tabindex="0" data-tip="${esc(tip)}"/>`;
     if(n<=20){ const lx=x+bw/2, ly=H-mg.b+12; s += `<text class="tick" x="${lx}" y="${ly}" text-anchor="end" transform="rotate(-40 ${lx} ${ly})">${esc(r.s.id)}</text>`; }
   });
@@ -1120,7 +1119,7 @@ function exampleState(){
     remarks:"S-09 fractured in the fillet and is excluded from statistics. Fracture surfaces on all other specimens were flat and granular.",
     conclusion:""
   });
-  Object.assign(st.settings, { defGL:25, nomD:6.35 });
+  Object.assign(st.settings, { nomD:6.35 });
   st.specimens = Array.from({length:10},(_,k)=>{
     const sp = blankSpecimen(k+1);
     Object.assign(sp,{ gl:31.75, ol:120.65 });
@@ -1140,7 +1139,7 @@ function exampleState(){
     const at = e => { for(let i=1;i<pts.length;i++) if(pts[i][0]>=e){ const [e0,s0]=pts[i-1],[e1,s1]=pts[i]; return s0+(e-e0)*(s1-s0)/(e1-e0); } return null; };
     Object.assign(sp, {
       loadBreak:r(pts[ib][1]*A,1), dpBreak:ib+1, stressBreak:r(pts[ib][1],2), strainBreak:r(pts[ib][0],5),
-      strainGL:25, strainTS:r(pts[im][0],5), stressTS:r(pts[im][1],2),
+      strainGL:r(25 + nrm()*0.03, 2), strainTS:r(pts[im][0],5), stressTS:r(pts[im][1],2),
       modYoung:r(sxy/sxx,0), modE:r((at(0.0025)-at(0.0005))/0.002,0)
     });
     if(k===8){ sp.frac="fillet"; sp.notes="Broke at fillet radius"; }
