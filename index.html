@@ -206,34 +206,130 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
 }
 
 /* ---------- Print ---------- */
-@page{size:letter;margin:12mm}
+@page{
+  size:letter; margin:17mm 14mm 16mm;
+  @top-left{ content:"Tensile Stress–Strain Test Report · ASTM C749-08"; font:600 7.5pt system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:#555; vertical-align:bottom; padding-bottom:3mm; border-bottom:.6pt solid #c8c8c8 }
+  @top-center{ content:""; border-bottom:.6pt solid #c8c8c8; vertical-align:bottom; padding-bottom:3mm }
+  @top-right{ content:""; font:7.5pt system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:#555; vertical-align:bottom; padding-bottom:3mm; border-bottom:.6pt solid #c8c8c8 }
+  @bottom-left{ content:"Results apply only to the items tested."; font:7pt system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:#777; vertical-align:top; padding-top:3mm }
+  @bottom-center{ content:"" }
+  @bottom-right{ content:"Page " counter(page) " of " counter(pages); font:600 7.5pt system-ui,-apple-system,"Segoe UI",Roboto,sans-serif; color:#555; vertical-align:top; padding-top:3mm }
+}
+@page:first{
+  @top-left{ content:""; border:none } @top-center{ content:""; border:none } @top-right{ content:""; border:none }
+}
 @media print{
   :root,:root[data-theme="dark"]{
-    color-scheme:light;--page:#fff;--paper:#fff;--surface:#fff;--ink:#000;--ink2:#333;--muted:#666;--grid:#ddd;--axis:#999;
-    --border:rgba(0,0,0,.2);--field:transparent;--field-border:transparent;--computed:#f1f5fb;
-    --s1:#2a78d6;--s2:#eb6834;--excl:#b5b3ab;--good-ink:#006300;--warn-ink:#8a5a00;--crit-ink:#b42323;--wash:rgba(0,0,0,.05)
+    color-scheme:light;--page:#fff;--paper:#fff;--surface:#fff;--ink:#111;--ink2:#3a3a3a;--muted:#6b6b6b;--grid:#dedede;--axis:#9a9a9a;
+    --border:#d4d4d4;--field:transparent;--field-border:transparent;--computed:#f3f6fa;
+    --s1:#2a78d6;--s2:#eb6834;--excl:#b5b3ab;--good-ink:#006300;--warn-ink:#8a5a00;--crit-ink:#b42323;--wash:rgba(0,0,0,.045);
+    --rule:#c8c8c8; --chip:#26364a;
   }
-  body{font-size:11px;background:#fff}
+  html,body{background:#fff}
+  body{font-size:9pt;line-height:1.4;-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .wrap{max-width:none;padding:0}
-  .no-print,.toolbar{display:none!important}
+  .no-print,.toolbar,#tip{display:none!important}
   .print-only{display:block}
-  .sheet{border:none;border-radius:0;padding:0;margin:0 0 14px}
-  section.sheet.pb{break-before:page}
-  input,select,textarea{border:none!important;background:transparent!important;padding:1px 2px!important;appearance:none;-webkit-appearance:none}
+
+  /* sections and pagination */
+  .sheet{border:none;border-radius:0;padding:0;margin:0 0 6mm;background:none}
+  section.sheet.pb{break-before:auto}
+  #sec-loc{break-before:page;break-inside:avoid}
+  #sec-dim{break-inside:avoid}
+  #sec-res,#sec-sum{break-before:page}
+  #sec-sign{break-inside:avoid}
+  #accTable{break-inside:avoid}
+  h2,h3,h4{break-after:avoid}
+  .tbl-wrap{overflow:visible;margin:0;padding:0}
+
+  /* masthead */
+  .rep-head{display:grid;grid-template-columns:1fr auto;align-items:end;gap:8mm;border-bottom:none;padding:0 0 4mm;margin:0 0 6mm;position:relative}
+  .rep-head::before{content:"";position:absolute;left:0;right:0;top:-1mm;height:1.6mm;background:var(--chip)}
+  .rep-head::after{content:"";position:absolute;left:0;right:0;bottom:0;border-bottom:1.2pt solid var(--ink)}
+  .rep-head>div:first-child{padding-top:5mm}
+  h1{font-size:17pt;font-weight:650;letter-spacing:-.01em;margin:0 0 1mm}
+  .rep-head .std{font-size:8.5pt;color:var(--ink2)}
+  .rep-head .sub input{font-size:10pt!important;font-weight:600;color:var(--ink)}
+  .badge{font-size:7pt;letter-spacing:.08em;text-transform:uppercase;border:1pt solid var(--ink2);color:var(--ink2);border-radius:2pt;padding:.4mm 1.6mm;vertical-align:4pt;margin-left:3mm}
+  .rep-head .ids{grid-template-columns:auto 38mm;gap:0;align-items:stretch;border:.8pt solid var(--ink2);border-radius:1.5pt;font-size:7pt;margin-top:5mm}
+  .rep-head .ids>span:not(.pv){display:flex;align-items:center;padding:1.4mm 2.5mm;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:#f4f4f4;border-bottom:.5pt solid var(--rule);white-space:nowrap}
+  .rep-head .ids>input,.rep-head .ids>select,.rep-head .ids>.pv{padding:1.4mm 2.5mm!important;font-size:9pt!important;font-weight:600;border-bottom:.5pt solid var(--rule)!important;border-left:.5pt solid var(--rule)!important}
+  .rep-head .ids>:nth-last-child(-n+3){border-bottom:none!important}
+
+  /* headings */
+  h2{font-size:11.5pt;font-weight:650;margin:0 0 3.5mm;padding-bottom:1.6mm;border-bottom:.8pt solid var(--ink);gap:2.5mm;align-items:center}
+  h2 .num{display:inline-grid;place-items:center;min-width:5.2mm;height:5.2mm;border-radius:1pt;background:var(--chip);color:#fff;font-size:8pt;font-weight:700}
+  h3{font-size:7.5pt;letter-spacing:.09em;color:var(--ink2);margin:5mm 0 2mm}
+  p.hint{font-size:8.5pt;color:var(--ink2);margin:0 0 3mm}
+
+  /* form fields: label over value with a fill-in rule */
+  input,select,textarea{border:none!important;background:transparent!important;padding:.6mm 0!important;appearance:none;-webkit-appearance:none;font-size:9pt!important;color:var(--ink);border-radius:0}
   select{background-image:none}
   input::-webkit-calendar-picker-indicator{display:none}
   input.print-empty{visibility:hidden}
-  textarea{resize:none;min-height:0}
-  th,td{padding:3px 4px}
-  .chart,.tile{break-inside:avoid}
-  .charts{grid-template-columns:1fr 1fr}
-  .charts.small{grid-template-columns:1fr 1fr 1fr}
-  #sec-loc,.billet-fig{break-inside:avoid}
+  .grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:3mm 6mm}
+  .field{gap:.4mm}
+  .field>span{font-size:6.8pt;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+  .field>input,.field>select,.field>textarea,.field>.pv{border-bottom:.5pt solid var(--rule)!important;min-height:5.2mm}
+  .has-pv{display:none!important}
+  .pv{display:block;font-size:9pt;padding:.6mm 0;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--ink)}
+  td .pv{display:inline;padding:0;font-size:inherit}
+  .rep-head .sub .pv{font-size:10pt;font-weight:600}
+  textarea{resize:none;min-height:0;field-sizing:content;white-space:pre-wrap}
+  .field.wide>textarea{min-height:7mm}
+
+  /* tables */
+  table{font-size:8.5pt;border-top:1pt solid var(--ink);border-bottom:1pt solid var(--ink)}
+  th,td{padding:1.1mm 1.6mm;border-bottom:.5pt solid var(--grid)}
+  th{font-size:7pt;font-weight:650;color:var(--ink2);background:#f2f2f2;border-bottom:.8pt solid var(--axis);vertical-align:bottom}
+  th small{font-size:6.5pt}
+  td.id{font-weight:650}
+  td.out{background:var(--computed)}
+  td input,td select{padding:0!important;font-size:8.5pt!important}
+  td select,td input{field-sizing:content;min-width:0!important;width:auto}
+  td input.n{width:100%}
+  .tbl-res{font-size:8pt}
+  .tbl-res th{min-width:0;font-size:6.6pt;line-height:1.2}
+  .tbl-res td input.n{font-size:8pt!important}
+  tr{break-inside:avoid}
+  .st{font-size:7.5pt}
+
+  /* summary tiles */
+  .tiles{grid-template-columns:repeat(4,minmax(0,1fr));gap:2.5mm;margin-bottom:5mm}
+  .tile{border:.6pt solid var(--border);border-radius:1.5pt;padding:2.2mm 3mm;border-top:1.6pt solid var(--chip);break-inside:avoid}
+  .tile .lab{font-size:6.8pt;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  .tile .val{font-size:14pt}
+  .tile .val small{font-size:8pt}
+  .tile .det{font-size:7pt}
+
+  /* charts */
+  .charts{grid-template-columns:1fr 1fr;gap:3mm}
+  .charts.small{grid-template-columns:1fr 1fr 1fr;gap:3mm}
   .charts>.chart:only-child{grid-column:1/-1}
-  .tbl-res{font-size:9.5px}
-  .tbl-res th{min-width:0}
-  .tbl-res td input.n{min-width:0}
-  #tip{display:none!important}
+  #chWeib svg{max-height:46mm;width:auto;margin:0 auto}
+  .chart{border:.6pt solid var(--border);border-radius:1.5pt;padding:2.4mm 2.6mm 1.4mm;break-inside:avoid}
+  .chart h4,.charts.small .chart h4{font-size:8pt;font-weight:650}
+  .chart .cap{font-size:6.8pt;margin:.5mm 0 1.5mm}
+  .legend{font-size:7.5pt;margin-bottom:2mm}
+  .sub{font-size:7.5pt}
+
+  /* billet figure */
+  .billet-fig{break-inside:avoid}
+  .billet-fig svg{max-width:136mm;margin:0 auto}
+  .billet-fig figcaption{justify-content:center;font-size:7.5pt}
+
+  /* sign-off */
+  .sign{grid-template-columns:repeat(3,minmax(0,1fr));gap:4mm;margin-top:4mm}
+  .sign,.tiles,.charts{padding:0 .6pt}
+  .sign .box{min-width:0;overflow:hidden}
+  .sign .box input[type="date"]{width:auto;max-width:100%}
+  .sign .box{border:.6pt solid var(--border);border-radius:1.5pt;padding:2.5mm 3mm}
+  .sign .box>.sub:first-child{font-size:6.8pt;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+  .sign .box>input,.sign .box>.pv{font-weight:600;border-bottom:.5pt solid var(--rule)!important;min-height:5.2mm}
+  .sign .line{height:8mm;border-bottom:.6pt solid var(--ink2);margin:2mm 0 1mm}
+  .sign .box>.sub:last-child{font-size:6.8pt;color:var(--muted)}
+  .sign .box>.sub:last-child input{font-size:8pt!important;color:var(--ink)}
+  .foot{font-size:7pt;color:var(--muted);margin-top:5mm;padding-top:2mm;border-top:.5pt solid var(--rule)}
 }
 </style>
 </head>
@@ -969,13 +1065,30 @@ $("#btnCsv").onclick = ()=>{
 $("#btnPrint").onclick = ()=> window.print();
 /* While printing: hide empty date boxes (their mm/dd/yyyy prompt) and instruction placeholders. */
 function printMode(on){
+  document.querySelectorAll(".pv").forEach(e=>e.remove());
+  document.querySelectorAll(".has-pv").forEach(e=>e.classList.remove("has-pv"));
+  if(on) document.querySelectorAll('input:not([type]), input[type="text"], select').forEach(el=>{
+    if(el.closest(".no-print") || el.classList.contains("n")) return;
+    const sp = document.createElement("div");
+    sp.className = "pv";
+    sp.textContent = el.tagName==="SELECT" ? (el.selectedOptions[0]?.textContent || "") : el.value;
+    el.after(sp); el.classList.add("has-pv");
+  });
   document.querySelectorAll('input[type="date"]').forEach(el=>el.classList.toggle("print-empty", on && !el.value));
   document.querySelectorAll(".ph-instr").forEach(el=>{
     if(on){ el.dataset.ph0 = el.placeholder; el.placeholder = ""; }
     else if(el.dataset.ph0 !== undefined){ el.placeholder = el.dataset.ph0; }
   });
 }
-window.addEventListener("beforeprint", ()=>printMode(true));
+function pageBoxes(){
+  const q = t => '"' + String(t).replace(/\\/g,"\\\\").replace(/"/g,'\\"').replace(/[\r\n]+/g," ") + '"';
+  const m = state.meta, id = [m.reportNo ? "Report " + m.reportNo : "", m.revision ? "Rev. " + m.revision : "", m.status || ""].filter(Boolean).join("  ·  ");
+  const foot = (m.labName ? m.labName + "  ·  " : "") + "Results apply only to the items tested.";
+  let el = document.getElementById("pageBoxes");
+  if(!el){ el = document.createElement("style"); el.id = "pageBoxes"; document.head.appendChild(el); }
+  el.textContent = `@page{ @top-right{ content:${q(id)} } @bottom-left{ content:${q(foot)} } } @page:first{ @top-right{ content:"" } }`;
+}
+window.addEventListener("beforeprint", ()=>{ pageBoxes(); printMode(true); });
 window.addEventListener("afterprint", ()=>printMode(false));
 
 $("#btnClear").onclick = ()=>{
