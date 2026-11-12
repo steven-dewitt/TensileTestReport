@@ -30,7 +30,7 @@ tables, charts, summaries and CSV export all follow it.
 | 2 | Specimen location in billet | Drawings to scale of the extruded billet, Ø7.750 × 1.000 in thick, and the test specimen. The plan view and section A–A show the 4.750 in specimen lying on a diameter through the billet centre at mid-thickness, perpendicular to the extrusion axis, with 1.500 in of billet at each end. A specimen detail shows the Ø0.500 in ends and Ø0.250 in centre section. |
 | 3 | Test setup (load train) | The ASTM C749-08 load train diagram (crossheads, strained chains of 4 links or more, optional parasitic stress monitor, grips, precision chain attachments and specimen), with a short description of each part |
 | 4 | Specimen dimensions | Specimen IDs, two gauge-diameter readings 90° apart, reduced-section length and overall length. The page gives the mean diameter and cross-sectional area. Specimens are added and removed here. |
-| 5 | Test results by specimen | The nine values reported by the test software (below), fracture location, include/exclude and notes. A load ÷ area check flags reported stresses that don't match the measured area. |
+| 5 | Test results by specimen | The nine values reported by the test software (below) for each specimen |
 | 6 | Summary of results | Summary tiles, statistics for every result (n, mean, SD, CV, min, max), a chart for each result by specimen, and a Weibull plot of tensile strength |
 | 7 | Remarks and approval | Observations, conclusion and signatures |
 
@@ -57,20 +57,15 @@ specimen, since it differs slightly from one specimen to the next.
 ## Calculations
 
 - **Area** = π·d̄²/4, where d̄ is the mean of the two gauge-diameter readings.
-- **Stress check**: load at break ÷ area is compared with the reported tensile stress at
-  break, and differences over 2 % are flagged. The page also flags stress at break above
-  tensile strength, strain at tensile strength above strain at break, and strain values
-  that look like percentages.
-- **Included specimens**: with *Include* set to *Auto*, only specimens that fractured within
-  the gauge length count in the statistics. *Yes* and *No* override this.
-- **Statistics**: sample standard deviation (n − 1); CV = SD ÷ mean.
+- **Statistics**: every specimen with results is counted. Sample standard deviation
+  (n − 1); CV = SD ÷ mean.
 - **Weibull** (tensile stress at tensile strength): F = (i − 0.5)/n, with least-squares fit of
   ln ln[1/(1−F)] on ln σ, giving the Weibull modulus m and characteristic strength σ₀.
 
 ## Example data
 
-**Load example data** fills the report with generated values for ten specimens,
-one of which broke in the fillet. The values are illustrative only and are not
+**Load example data** fills the report with generated values for ten specimens.
+The values are illustrative only and are not
 measured results.
 
 ## Notes

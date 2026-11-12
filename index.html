@@ -247,7 +247,6 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
   #sec-dim{break-inside:avoid}
   #sec-setup,#resTable,#sumTable,.tiles{break-inside:avoid}
   #sec-sign{break-inside:avoid}
-  #accTable{break-inside:avoid}
   h2,h3,h4{break-after:avoid}
   .tbl-wrap{overflow:visible;margin:0;padding:0}
 
@@ -526,7 +525,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
 <!-- ================= SPECIMEN DIMENSIONS ================= -->
 <section class="sheet pb" id="sec-dim">
   <h2><span class="num">4</span> Specimen dimensions</h2>
-  <p class="hint no-print">Measure the gauge-section diameter twice at the minimum section, 90° apart. The cross-sectional area comes from the mean diameter and is used to check the reported stress at break.</p>
+  <p class="hint no-print">Measure the gauge-section diameter twice at the minimum section, 90° apart. The cross-sectional area comes from the mean diameter.</p>
   <div class="grid" style="margin-bottom:10px">
     <label class="field"><span>Nominal gauge diameter (<span data-u="len"></span>)</span><input class="n" data-bind="settings.nomD" data-num data-kind="len" inputmode="decimal"></label>
     <label class="field"><span>Measuring instrument / ID</span><input data-bind="meta.dimInstrument"></label>
@@ -553,19 +552,15 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
       <span id="resPasteMsg" class="sub"></span>
     </div>
   </details>
-
-  <h3>Fracture and acceptance</h3>
-  <p class="hint no-print">Set <b>Include</b> to <i>Auto</i> to count only specimens that broke inside the gauge length. The check column compares load at break ÷ measured area with the reported stress at break.</p>
-  <div class="tbl-wrap"><table id="accTable" class="tbl-data"></table></div>
 </section>
 
 <!-- ================= SUMMARY ================= -->
 <section class="sheet pb" id="sec-sum">
   <h2><span class="num">6</span> Summary of results</h2>
   <div class="tiles" id="tiles"></div>
-  <h3>Statistics, all included specimens</h3>
+  <h3>Statistics, all specimens</h3>
   <div class="tbl-wrap"><table id="sumTable" class="tbl-data"></table></div>
-  <p class="sub" style="margin-top:6px"><span class="no-print">Values are stored in metric and converted for display, so switching units never changes the data. </span>Statistics include only specimens marked <i>Included</i>. SD is the sample standard deviation (n − 1). CV = SD / mean. For the Weibull fit of tensile strength, rank i of n uses F = (i − 0.5)/n and least-squares regression of ln ln[1/(1−F)] on ln σ.</p>
+  <p class="sub" style="margin-top:6px"><span class="no-print">Values are stored in metric and converted for display, so switching units never changes the data. </span>Statistics cover every specimen with results. SD is the sample standard deviation (n − 1). CV = SD / mean. For the Weibull fit of tensile strength, rank i of n uses F = (i − 0.5)/n and least-squares regression of ln ln[1/(1−F)] on ln σ.</p>
 
   <h3>Result charts by specimen</h3>
   <div class="legend" data-legend="incl"></div>
@@ -575,7 +570,7 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
   <div class="charts">
     <div class="chart">
       <h4>Weibull plot, tensile stress at tensile strength</h4>
-      <div class="cap" id="weibCap">Included specimens.</div>
+      <div class="cap" id="weibCap">All specimens.</div>
       <div id="chWeib"></div>
     </div>
   </div>
@@ -610,13 +605,6 @@ svg .bf-caption{fill:var(--muted);font-size:12px}
    ===================================================================== */
 
 const LS_KEY = "c749-tensile-report-v3";
-const FRACTURE = [
-  ["gauge","Within gauge length"],
-  ["transition","Gauge-to-fillet transition"],
-  ["fillet","In fillet / shoulder"],
-  ["grip","In grip end / holder"],
-  ["nr","Not recorded"]
-];
 
 /* ---------- unit systems: k converts stored metric value -> displayed value ---------- */
 const MM_PER_IN = 25.4, N_PER_LBF = 4.4482216152605, PSI_PER_MPA = 145.0377377;
@@ -652,7 +640,7 @@ const metUnit = m => uOf(m.kind) ? ` (${uOf(m.kind)})` : "";
 
 /* ---------- state ---------- */
 function blankSpecimen(i){
-  const s = { id:"S-"+String(i).padStart(2,"0"), d1:null, d2:null, gl:null, ol:null, frac:"gauge", incl:"auto", notes:"" };
+  const s = { id:"S-"+String(i).padStart(2,"0"), d1:null, d2:null, gl:null, ol:null };
   METRICS.forEach(m=>s[m.k]=null);
   return s;
 }
@@ -684,6 +672,7 @@ function normalize(s){
   const num = v => typeof v==="number" && Number.isFinite(v);                       // runs before the helpers below are defined
   if(num(oldGL)) out.specimens.forEach(sp=>{ if(!num(sp.strainGL)) sp.strainGL = oldGL; });
   delete out.settings.defGL;
+  out.specimens.forEach(sp=>{ delete sp.frac; delete sp.incl; delete sp.notes; });
   return out;
 }
 
@@ -721,7 +710,7 @@ let C = null;
 function compute(){
   const st = state.settings, c = { sp:[] };
   for(const s of state.specimens){
-    const r = { s, v:{}, src:{}, warn:[] };
+    const r = { s, v:{}, src:{} };
     r.dAvg = avgNum([s.d1,s.d2]);
     r.A = isNum(r.dAvg) ? Math.PI*r.dAvg*r.dAvg/4 : null;
     for(const m of METRICS){
@@ -732,17 +721,9 @@ function compute(){
     r.sigma = isNum(r.v.stressTS) ? r.v.stressTS : isNum(r.v.stressBreak) ? r.v.stressBreak
             : (isNum(r.v.loadBreak) && isNum(r.A) ? r.v.loadBreak/r.A : null);
     r.tested = METRICS.some(m=>m.k!=="strainGL" && isNum(r.v[m.k]));
-    r.included = r.tested && (s.incl==="yes" || (s.incl==="auto" && s.frac==="gauge"));
-    // consistency checks
-    r.calcBreak = isNum(r.v.loadBreak) && isNum(r.A) ? r.v.loadBreak/r.A : null;
-    r.dev = isNum(r.calcBreak) && isNum(r.v.stressBreak) && r.v.stressBreak ? (r.calcBreak/r.v.stressBreak-1)*100 : null;
-    if(isNum(r.dev) && Math.abs(r.dev)>2) r.warn.push(`Load ÷ area differs from stress at break by ${fmt(r.dev,1)} %`);
-    if(isNum(r.v.stressBreak) && isNum(r.v.stressTS) && r.v.stressBreak > r.v.stressTS*1.0001) r.warn.push("Stress at break exceeds tensile strength");
-    if(isNum(r.v.strainBreak) && isNum(r.v.strainTS) && r.v.strainTS > r.v.strainBreak*1.0001) r.warn.push("Strain at tensile strength exceeds strain at break");
-    if(isNum(r.v.strainBreak) && r.v.strainBreak > 0.05) r.warn.push(`Strain at break above 0.05 ${uOf("strain")}: check that strain is not in %`);
     c.sp.push(r);
   }
-  const inc = c.sp.filter(r=>r.included);
+  const inc = c.sp.filter(r=>r.tested);
   c.all = { rows:inc, m:{} };
   METRICS.forEach(m=>c.all.m[m.k]=stats(inc.map(r=>r.v[m.k])));
   c.all.weib = weibull(inc.map(r=>toD(r.sigma,"stress")));   // in displayed stress units
@@ -816,24 +797,12 @@ function renderSpecTables(){
   });
   $("#resTable").innerHTML = h;
 
-  // acceptance
-  h = `<tr><th>Specimen</th><th>Fracture location</th><th>Include</th><th class="r">Load ÷ area<small>${uOf("stress")}</small></th><th class="r">Difference from stress at break<small>%</small></th><th>Status</th><th>Notes</th></tr>`;
-  sp.forEach((s,i)=>{
-    h += `<tr><td class="id" data-out="s${i}.id">${esc(s.id)}</td>
-      <td>${sel(`specimens.${i}.frac`, s.frac, FRACTURE)}</td>
-      <td>${sel(`specimens.${i}.incl`, s.incl, [["auto","Auto"],["yes","Yes"],["no","No"]])}</td>
-      <td class="out" data-out="s${i}.calc">—</td>
-      <td class="out" data-out="s${i}.dev">—</td>
-      <td data-out="s${i}.status" data-html>—</td>
-      <td>${txtInp(`specimens.${i}.notes`, s.notes, `style="min-width:160px"`)}</td></tr>`;
-  });
-  $("#accTable").innerHTML = h;
 }
 
 function renderStatic(){
   $("#pasteOrder").textContent = "[Specimen ID], " + METRICS.map(m=>m.label+metUnit(m)).join(", ");
   $$("[data-bind]").forEach(el=>{
-    if(el.closest("#dimTable,#resTable,#accTable")) return;
+    if(el.closest("#dimTable,#resTable")) return;
     const v = getPath(state, el.dataset.bind);
     if(el.hasAttribute("data-num")) el.value = inputVal(v, el.dataset.kind || "idx");
     else el.value = v ?? "";
@@ -852,14 +821,6 @@ function refresh(){
     out[`s${i}.id`] = esc(s.id);
     out[`s${i}.dAvg`] = fk(r.dAvg, "len", 1);
     out[`s${i}.A`] = fk(r.A, "area");
-    out[`s${i}.calc`] = fk(r.calcBreak, "stress");
-    out[`s${i}.dev`] = isNum(r.dev) ? (Math.abs(r.dev)<0.005 ? fmt(0,2) : (r.dev>0?"+":"")+fmt(r.dev,2)) : "—";
-    let st;
-    if(!r.tested) st = `<span class="st na">Not tested</span>`;
-    else if(r.included) st = `<span class="st ok">Included</span>`;
-    else st = `<span class="st bad">Excluded</span>`;
-    if(r.warn.length) st += r.warn.map(w=>`<br><span class="st warn">${esc(w)}</span>`).join("");
-    out[`s${i}.status`] = st;
   });
   $$("[data-out]").forEach(el=>{
     const k = el.dataset.out; if(!(k in out)) return;
@@ -885,7 +846,7 @@ function renderSummary(){
     tile("Young's modulus", fk(my.mean,"mod"), uOf("mod"), sd(my,"mod")) +
     tile("E-modulus", fk(me.mean,"mod"), uOf("mod"), sd(me,"mod")) +
     tile("Weibull modulus, m", a.weib?fmt(a.weib.m,1):"—", "", a.weib?`σ₀ ${fmt(a.weib.s0,UK("stress").dp)} ${us} · R² ${fmt(a.weib.r2,3)}`:"needs ≥ 3 specimens") +
-    tile("Specimens included", `${a.rows.length}`, `of ${C.nTotal}`, `${C.nTested} tested · ${C.nTested-a.rows.length} excluded`);
+    tile("Specimens tested", `${C.nTested}`, `of ${C.nTotal}`, C.nTotal>C.nTested ? `${C.nTotal-C.nTested} without results` : "");
 
   let h = `<tr><th>Result</th><th>Unit</th><th class="r">n</th><th class="r">Mean</th><th class="r">SD</th><th class="r">CV<small>%</small></th><th class="r">Min</th><th class="r">Max</th></tr>`;
   for(const m of METRICS){
@@ -893,7 +854,7 @@ function renderSummary(){
     h += `<tr><td>${esc(m.label)}</td><td>${uOf(kd)||"—"}</td><td class="r">${s.n||0}</td><td class="r"><b>${s.n?fk(s.mean,kd,kd==="idx"?1:0):"—"}</b></td>
       <td class="r">${s.n>1?fk(s.sd,kd,1):"—"}</td><td class="r">${s.n>1&&isNum(s.cv)?fmt(s.cv,1):"—"}</td><td class="r">${s.n?fk(s.min,kd):"—"}</td><td class="r">${s.n?fk(s.max,kd):"—"}</td></tr>`;
   }
-  h += `<tr><td>Weibull modulus m / characteristic strength σ₀ (tensile stress at tensile strength)</td><td>— / ${us}</td><td class="r">${a.weib?a.weib.n:0}</td><td class="r" colspan="5" style="text-align:left">${a.weib?`m = ${fmt(a.weib.m,2)} · σ₀ = ${fmt(a.weib.s0,UK("stress").dp)} ${us} · R² = ${fmt(a.weib.r2,3)}`:"needs ≥ 3 included specimens"}</td></tr>`;
+  h += `<tr><td>Weibull modulus m / characteristic strength σ₀ (tensile stress at tensile strength)</td><td>— / ${us}</td><td class="r">${a.weib?a.weib.n:0}</td><td class="r" colspan="5" style="text-align:left">${a.weib?`m = ${fmt(a.weib.m,2)} · σ₀ = ${fmt(a.weib.s0,UK("stress").dp)} ${us} · R² = ${fmt(a.weib.r2,3)}`:"needs ≥ 3 specimens"}</td></tr>`;
   $("#sumTable").innerHTML = h;
 }
 
@@ -920,13 +881,10 @@ function tickFmt(t, dp){
 }
 const svgOpen = (W,H,label) => `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label)}">`;
 function emptyChart(W,H,msg,label){ return `${svgOpen(W,H,label)}<text class="empty" x="${W/2}" y="${H/2}" text-anchor="middle">${esc(msg)}</text></svg>`; }
-const clsFor = r => r.included ? "par" : "ex";
+const clsFor = r => "par";
 
 function renderCharts(){
-  const anyEx = C.sp.some(r=>r.tested && !r.included);
-  $$('[data-legend="incl"]').forEach(el=>el.innerHTML = anyEx
-    ? `<span><i style="background:var(--s1)"></i>Included</span><span><i style="background:var(--excl)"></i>Excluded</span><span><i class="line" style="background:var(--ink2)"></i>Mean of included, band ±1 SD</span>`
-    : `<span><i class="line" style="background:var(--ink2)"></i>Mean, band ±1 SD</span>`);
+  $$('[data-legend="incl"]').forEach(el=>el.innerHTML = `<span><i class="line" style="background:var(--ink2)"></i>Mean, band ±1 SD</span>`);
   renderMetricCharts(); chartWeib();
 }
 
@@ -941,7 +899,7 @@ function renderMetricCharts(){
   box.innerHTML = METRICS.map(m=>`<div class="chart"><h4>${esc(m.label+metUnit(m))}</h4><div class="cap" data-mcap="${m.k}"></div><div data-mchart="${m.k}"></div></div>`).join("");
   for(const m of METRICS){
     const a = C.all.m[m.k], u = uOf(m.kind);
-    $(`[data-mcap="${m.k}"]`, box).textContent = a.n ? `Mean ${fk(a.mean,m.kind)}${u?" "+u:""}${a.n>1?` · SD ${fk(a.sd,m.kind,1)} · CV ${fmt(a.cv,1)} %`:""} · n = ${a.n}` : "No included results yet.";
+    $(`[data-mcap="${m.k}"]`, box).textContent = a.n ? `Mean ${fk(a.mean,m.kind)}${u?" "+u:""}${a.n>1?` · SD ${fk(a.sd,m.kind,1)} · CV ${fmt(a.cv,1)} %`:""} · n = ${a.n}` : "No results yet.";
     $(`[data-mchart="${m.k}"]`, box).innerHTML = columnChart(m);
   }
 }
@@ -959,7 +917,7 @@ function columnChart(m){
   if(isNum(sd_)) s += `<rect class="band" x="${mg.l}" width="${W-mg.l-mg.r}" y="${sy(mean_+sd_)}" height="${Math.max(0,sy(mean_-sd_)-sy(mean_+sd_))}"/>`;
   rows.forEach((r,i)=>{
     const x = mg.l + band*i + (band-bw)/2, v=D(r.v[m.k]);
-    const tip = `${r.s.id}\n${m.label}\n${fmt(v,dp)}${u?" "+u:""}\n${r.included?"Included":"Excluded"}`;
+    const tip = `${r.s.id}\n${m.label}\n${fmt(v,dp)}${u?" "+u:""}`;
     s += `<path class="${clsFor(r)}" d="${colPath(x,bw,sy(0),sy(v),4)}" tabindex="0" data-tip="${esc(tip)}"/>`;
     if(n<=20){ const lx=x+bw/2, ly=H-mg.b+12; s += `<text class="tick" x="${lx}" y="${ly}" text-anchor="end" transform="rotate(-40 ${lx} ${ly})">${esc(r.s.id)}</text>`; }
   });
@@ -974,8 +932,8 @@ function columnChart(m){
 /* --- Weibull --- */
 function chartWeib(){
   const w = C.all.weib, W=1040, H=360, m={t:14,r:18,b:42,l:56}, us=uOf("stress"), dp=UK("stress").dp;
-  if(!w){ $("#chWeib").innerHTML = emptyChart(W,H,"At least 3 included specimens are needed","Weibull plot"); $("#weibCap").textContent="Included specimens."; return; }
-  $("#weibCap").textContent = `Included specimens (n = ${w.n}). Dots are specimens; the line is the least-squares fit. m = ${fmt(w.m,1)}, σ₀ = ${fmt(w.s0,dp)} ${us}, R² = ${fmt(w.r2,3)}.`;
+  if(!w){ $("#chWeib").innerHTML = emptyChart(W,H,"At least 3 specimens are needed","Weibull plot"); $("#weibCap").textContent="All specimens."; return; }
+  $("#weibCap").textContent = `All specimens (n = ${w.n}). Dots are specimens; the line is the least-squares fit. m = ${fmt(w.m,1)}, σ₀ = ${fmt(w.s0,dp)} ${us}, R² = ${fmt(w.r2,3)}.`;
   const smin = w.pts[0].s, smax = w.pts[w.n-1].s;
   const pad = (smax-smin)*0.08 || smax*0.05;
   const xs = niceScale(smin-pad, smax+pad, 6);
@@ -1092,13 +1050,11 @@ $("#fileLoad").onchange = e=>{
 $("#btnCsv").onclick = ()=>{
   const ul = uOf("len");
   const head = ["Specimen ID",`Dia 1 (${ul})`,`Dia 2 (${ul})`,`Mean dia (${ul})`,`Area (${uOf("area")})`,`Reduced-section length (${ul})`,`Overall length (${ul})`,
-    ...METRICS.map(m=>m.label+metUnit(m)),
-    `Load / area (${uOf("stress")})`,"Fracture location","Included","Checks","Notes"];
+    ...METRICS.map(m=>m.label+metUnit(m))];
   const q = v => { const s = v==null ? "" : String(v); return /[",\n]/.test(s) ? `"${s.replace(/"/g,'""')}"` : s; };
   const n = (v,kind,extra=1)=> isNum(v) ? toD(v,kind).toFixed(UK(kind).dp+extra) : "";
   const rows = C.sp.map(r=>{ const s=r.s; return [s.id,n(s.d1,"len"),n(s.d2,"len"),n(r.dAvg,"len",2),n(r.A,"area"),n(s.gl,"len"),n(s.ol,"len"),
-    ...METRICS.map(m=>n(r.v[m.k], m.kind, m.kind==="idx"?0:1)),
-    n(r.calcBreak,"stress"),(FRACTURE.find(f=>f[0]===s.frac)||["",""])[1],r.included?"Yes":"No",r.warn.join("; "),s.notes]; });
+    ...METRICS.map(m=>n(r.v[m.k], m.kind, m.kind==="idx"?0:1))]; });
   download(fileBase()+"-specimens.csv", "﻿"+[head,...rows].map(r=>r.map(q).join(",")).join("\r\n"), "text/csv");
 };
 $("#btnPrint").onclick = ()=> window.print();
@@ -1156,7 +1112,7 @@ function exampleState(){
     machine:"Electromechanical universal test machine", machineId:"UTM-01", loadCell:"10 kN", rate:"Crosshead 0.5 mm/min",
     temp:22, rh:"45", testDate:"2026-11-02 to 2026-11-03", operator:"A. Technician",
     dimInstrument:"Digital micrometer MIC-07",
-    remarks:"S-09 fractured in the fillet and is excluded from statistics. Fracture surfaces on all other specimens were flat and granular.",
+    remarks:"Fracture surfaces were flat and granular on all specimens.",
     conclusion:""
   });
   Object.assign(st.settings, { nomD:6.35 });
@@ -1182,7 +1138,6 @@ function exampleState(){
       strainGL:r(25 + nrm()*0.03, 2), strainTS:r(pts[im][0],5), stressTS:r(pts[im][1],2),
       modYoung:r(sxy/sxx,0), modE:r((at(0.0025)-at(0.0005))/0.002,0)
     });
-    if(k===8){ sp.frac="fillet"; sp.notes="Broke at fillet radius"; }
     return sp;
   });
   return st;
