@@ -32,7 +32,7 @@ tables, charts, summaries and CSV export all follow it.
 | 4 | Specimen dimensions | Specimen IDs, two gauge-diameter readings 90° apart, reduced-section length and overall length. The page gives the mean diameter and cross-sectional area. Specimens are added and removed here. |
 | 5 | Test results by specimen | The nine values reported by the test software (below) for each specimen |
 | 6 | Summary of results | Summary tiles, statistics for every result (n, mean, SD, CV, min, max), a chart for each result by specimen, and a Weibull plot of tensile strength |
-| 7 | Remarks and approval | Observations, conclusion and signatures |
+| 7 | Remarks and approval | Observations, conclusion, and name, signature and date for tested, reviewed and approved by. Each signature can be drawn on screen (mouse, touch or stylus) or uploaded as an image (JPG, PNG and other picture formats). |
 
 ### Results entered per specimen (Section 5)
 
@@ -53,6 +53,20 @@ test software**. Paste one row per specimen with the columns in the order above,
 optionally preceded by a specimen ID column. Rows with IDs are matched by ID.
 Header and unit rows are skipped. Strain gauge length is entered for each
 specimen, since it differs slightly from one specimen to the next.
+
+### Signatures
+
+In section 7, each of **Tested by**, **Reviewed by** and **Approved by** has:
+
+- **Draw**: opens a signing pad; sign with a mouse, finger or stylus, then **Use signature**.
+- **Upload image**: choose a JPG, PNG or other picture of a signature. A light paper
+  background is made transparent automatically so only the ink prints.
+- **Clear**: removes the signature.
+
+Adding a signature fills in its date with today's date if no date has been entered.
+Signatures are reduced to a small image (at most 600 × 200 px) and saved with the
+report, including in **Save data (.json)**. They are images placed on the report, not a
+certified or cryptographically verified electronic signature.
 
 ## Calculations
 
