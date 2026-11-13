@@ -689,7 +689,7 @@ function inputVal(v, kind){ if(!isNum(v)) return ""; const d = toD(v, kind); ret
 const fk = (v, kind, extra=0) => fmt(toD(v,kind), UK(kind).dp+extra);
 const uOf = kind => UK(kind).u;
 
-/* The nine reported results, in the order the test software lists them. */
+/* The eight reported results, in the order the test software lists them. */
 const METRICS = [
   { k:"loadBreak",   label:"Load at Break (Standard)",           kind:"force"  },
   { k:"dpBreak",     label:"Data point at Break (Standard)",     kind:"idx"    },
@@ -698,8 +698,7 @@ const METRICS = [
   { k:"strainGL",    label:"Strain gauge length",                kind:"len"    },
   { k:"strainTS",    label:"Strain 1 at Tensile Strength",       kind:"strain" },
   { k:"stressTS",    label:"Tensile stress at Tensile Strength", kind:"stress" },
-  { k:"modYoung",    label:"Modulus (Young's Tensile stress 0.01% - 0.1%)", kind:"mod" },
-  { k:"modE",        label:"Modulus (E-Modulus)",                kind:"mod"    }
+  { k:"modYoung",    label:"Modulus (Young's Tensile stress 0.01% - 0.1%)", kind:"mod" }
 ];
 const metUnit = m => uOf(m.kind) ? ` (${uOf(m.kind)})` : "";
 
@@ -741,7 +740,7 @@ function normalize(s){
   if(num(oldGL)) out.specimens.forEach(sp=>{ if(!num(sp.strainGL)) sp.strainGL = oldGL; });
   delete out.settings.defGL;
   out.meta.sig = Object.assign({ tested:null, reviewed:null, approved:null }, (s.meta && s.meta.sig) || {});
-  out.specimens.forEach(sp=>{ delete sp.frac; delete sp.incl; delete sp.notes; });
+  out.specimens.forEach(sp=>{ delete sp.frac; delete sp.incl; delete sp.notes; delete sp.modE; });
   return out;
 }
 
@@ -859,7 +858,7 @@ function renderSpecTables(){
   });
   $("#dimTable").innerHTML = h;
 
-  // results: the nine software values
+  // results: the eight software values
   h = `<tr><th>Specimen</th>${METRICS.map(m=>`<th class="r">${esc(m.label)}<small>${uOf(m.kind)||"index"}</small></th>`).join("")}</tr>`;
   sp.forEach((s,i)=>{
     h += `<tr><td class="id" data-out="s${i}.id">${esc(s.id)}</td>${METRICS.map(m=>`<td>${numInp(`specimens.${i}.${m.k}`, s[m.k], m.kind, `data-ph="s${i}.ph.${m.k}" aria-label="${esc(m.label)}"`)}</td>`).join("")}</tr>`;
@@ -907,13 +906,12 @@ function renderSummary(){
   const a=C.all, us=uOf("stress");
   const tile = (lab,val,unit,det)=>`<div class="tile"><div class="lab">${lab}</div><div class="val">${val}${unit?`<small>${unit}</small>`:""}</div><div class="det">${det||"&nbsp;"}</div></div>`;
   const sd = (st,kind) => st.n>1 ? `SD ${fk(st.sd,kind)} · CV ${fmt(st.cv,1)} %` : "";
-  const ts=a.m.stressTS, sb=a.m.stressBreak, ets=a.m.strainTS, my=a.m.modYoung, me=a.m.modE;
+  const ts=a.m.stressTS, sb=a.m.stressBreak, ets=a.m.strainTS, my=a.m.modYoung;
   $("#tiles").innerHTML =
     tile("Tensile stress at tensile strength", fk(ts.mean,"stress"), us, sd(ts,"stress")) +
     tile("Tensile stress at break", fk(sb.mean,"stress"), us, sd(sb,"stress")) +
     tile("Strain 1 at tensile strength", fk(ets.mean,"strain"), uOf("strain"), ets.n>1?`SD ${fk(ets.sd,"strain")}`:"") +
     tile("Young's modulus", fk(my.mean,"mod"), uOf("mod"), sd(my,"mod")) +
-    tile("E-modulus", fk(me.mean,"mod"), uOf("mod"), sd(me,"mod")) +
     tile("Weibull modulus, m", a.weib?fmt(a.weib.m,1):"—", "", a.weib?`σ₀ ${fmt(a.weib.s0,UK("stress").dp)} ${us} · R² ${fmt(a.weib.r2,3)}`:"needs ≥ 3 specimens") +
     tile("Specimens tested", `${C.nTested}`, `of ${C.nTotal}`, C.nTotal>C.nTested ? `${C.nTotal-C.nTested} without results` : "");
 
@@ -1166,7 +1164,7 @@ $("#btnExample").onclick = ()=>{
 
 /* =====================================================================
    EXAMPLE DATA: 10 specimens. Illustrative values only, derived from
-   simulated load-strain records so the nine results are consistent.
+   simulated load-strain records so the reported results are consistent.
    Stored in metric like all other data.
    ===================================================================== */
 function exampleState(){
@@ -1198,14 +1196,13 @@ function exampleState(){
     const tail = 1 + Math.floor(rnd()*4); let s = pts[pts.length-1][1];
     for(let j=1;j<=tail;j++){ s *= 1 - (0.002 + rnd()*0.004); pts.push([ef+j*step*0.6, s]); }
     const ib = pts.length-1;
-    // Young's: least-squares slope 0.01-0.1 %; E-modulus: chord 0.05-0.25 %
+    // Young's: least-squares slope 0.01-0.1 %
     const fit = pts.filter(p=>p[0]>=0.0001 && p[0]<=0.001), mx=mean(fit.map(p=>p[0])), my=mean(fit.map(p=>p[1]));
     let sxy=0,sxx=0; fit.forEach(p=>{ sxy+=(p[0]-mx)*(p[1]-my); sxx+=(p[0]-mx)**2; });
-    const at = e => { for(let i=1;i<pts.length;i++) if(pts[i][0]>=e){ const [e0,s0]=pts[i-1],[e1,s1]=pts[i]; return s0+(e-e0)*(s1-s0)/(e1-e0); } return null; };
     Object.assign(sp, {
       loadBreak:r(pts[ib][1]*A,1), dpBreak:ib+1, stressBreak:r(pts[ib][1],2), strainBreak:r(pts[ib][0],5),
       strainGL:r(25 + nrm()*0.03, 2), strainTS:r(pts[im][0],5), stressTS:r(pts[im][1],2),
-      modYoung:r(sxy/sxx,0), modE:r((at(0.0025)-at(0.0005))/0.002,0)
+      modYoung:r(sxy/sxx,0)
     });
     return sp;
   });
